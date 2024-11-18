@@ -12,28 +12,30 @@ const highlights = [
     title: "Traditional Dance",
     description:
       "Experience the rhythm and grace of Kolok's traditional dances performed during festivals.",
-    image: "./imgs/bg-hero.jpg",
+    image:
+      "https://akcdn.detik.net.id/community/media/visual/2023/09/17/tari-janger-kolok-dibawakan-oleh-penyandang-disabilitas-dari-desa-bengkala_169.jpeg?w=700&q=90",
   },
   {
     id: 2,
     title: "Local Crafts",
     description:
       "Discover the exquisite craftsmanship of Kolok artisans, known for their intricate handwoven textiles.",
-    image: "./imgs/bg-hero.jpg",
+    image: "./imgs/g1.jpeg",
   },
   {
     id: 3,
     title: "Festivals and Celebrations",
     description:
       "Join us in celebrating Kolok festivals that bring the community together with joyful festivities.",
-    image: "./imgs/bg-hero.jpg",
+    image: "./imgs/aslibengkala.JPG",
   },
   {
     id: 4,
     title: "Culinary Traditions",
     description:
       "Savor the flavors of Kolok cuisine, where traditional dishes showcase our rich culinary heritage.",
-    image: "./imgs/bg-hero.jpg",
+    image:
+      "https://asset-a.grid.id/crop/0x0:0x0/700x465/photo/2019/07/24/2425833339.jpg",
   },
 ];
 

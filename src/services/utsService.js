@@ -26,7 +26,7 @@ export const postPlaylist = async (values) => {
 
 export const updatePlaylist = async (id, values) => {
   try {
-    const response = await utsService.post(`/api/playlist/update${id}`, values);
+    const response = await utsService.post(`/api/playlist/update/${id}`, values);
     return response.status;
   } catch (error) {
     throw error;

@@ -6,27 +6,26 @@ import CulturalHeritage from "./pages/CulturalHeritage";
 import PrivateRoute from "./components/layout/PrivateRoute";
 import ForumDiscussion from "./pages/ForumDiscussion";
 import LoginPage from "./pages/Login";
-import ScrollableSections from "./pages/Test";
-import Contoh from "./pages/Contoh";
-import House from "./pages/House";
-import Users from "./pages/Users";
 import Playlist from "./pages/Playlist";
+import Report from "./pages/Report";
+import LandingPage from "./pages/LandingPage";
+import Contributions from "./pages/Contributions";
 
 function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/" element={<Dashboard />} />
-        <Route exact path="/test" element={<ScrollableSections />} />
-        <Route exact path="/contoh" element={<Contoh />} />
-        <Route exact path="/house" element={<House />} />
-        <Route exact path="/playlist" element={<Playlist />} />
-        <Route exact path="/users" element={<Users />} />
+        <Route exact path="/" element={<LandingPage />} />
         <Route exact path="/login" element={<LoginPage />} />
         <Route
           exact
           path="/dashboard"
           element={<PrivateRoute component={<Dashboard />} />}
+        />
+        <Route
+          exact
+          path="/contributions"
+          element={<PrivateRoute component={<Contributions />} />}
         />
         <Route
           exact
@@ -47,6 +46,16 @@ function App() {
           exact
           path="/forum"
           element={<PrivateRoute component={<ForumDiscussion />} />}
+        />
+        <Route
+          exact
+          path="/playlist"
+          element={<PrivateRoute component={<Playlist />} />}
+        />
+        <Route
+          exact
+          path="/report"
+          element={<PrivateRoute component={<Report />} />}
         />
       </Routes>
     </>
