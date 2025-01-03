@@ -7,7 +7,9 @@ import {
   FacebookOutlined,
 } from "@ant-design/icons";
 import useAuth from "../../store/useAuth";
-import { useNavigate } from "react-router-dom";
+import { authStorage } from "../../utils/encryptStorage";
+import { Link, useNavigate } from "react-router-dom";
+import { getCurrentDayPeriod } from "../../utils/currentDayPeriod";
 
 const { Title, Text } = Typography;
 
@@ -26,6 +28,8 @@ const LoginPage = () => {
       // Jika data ditemukan, isi form dengan data tersebut
       form.setFieldsValue({ username: savedUsername, password: savedPassword });
     }
+
+    const token = authStorage.retrieveToken();
 
     if (isLogin) {
       navigate("/dashboard");
@@ -47,7 +51,7 @@ const LoginPage = () => {
 
       notification.success({
         message: "Login Successful",
-        description: `Welcome, your token is: ${values.username}`,
+        description: `Welcome, good ${getCurrentDayPeriod()} ${values.username}`,
       });
       form.resetFields();
       navigate("/dashboard");
@@ -183,12 +187,12 @@ const LoginPage = () => {
             {/* Create Account */}
             <p className="text-center text-gray-500">
               New here?{" "}
-              <a
-                href="/register"
+              <Link
+                to="/register"
                 className="font-medium text-blue-600 hover:underline"
               >
                 Create an account
-              </a>
+              </Link>
             </p>
             {/* Footer Text */}
             <div className="mt-[100px] text-sm opacity-60 absolute bottom-[10px]">

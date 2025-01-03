@@ -12,3 +12,11 @@ export const saveData = (key, data) => {
       console.error("Error menyimpan data:", error);
     }
   };
+
+export const getdata = (key) =>{
+  try{
+
+  }catch(error){
+    throw error
+  }
+}

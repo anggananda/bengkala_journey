@@ -52,9 +52,9 @@ const DiscoverJourney = () => {
           Discover Your Journey
         </h1>
         <Text className="text-gray-600 text-sm md:text-base font-poppins font-light text-center">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus cumque
-          corporis magni veniam, facere assumenda ut nobis dolorum unde quas
-          harum id minus ab accusantium tenetur? Non soluta blanditiis ipsum.
+          Explore the rich culture, breathtaking landscapes, and unique
+          experiences that Desa Bengkala has to offer. From learning about local
+          traditions to discovering hidden gems, your journey starts here.
         </Text>
       </div>
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Layout, Affix, Button, Modal, Avatar, Dropdown, Space } from "antd";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginOutlined } from "@ant-design/icons";
 import useAuth from "../../store/useAuth";
 import { CiUser } from "react-icons/ci";
@@ -8,12 +8,9 @@ import { FaUserCircle, FaCog, FaSignOutAlt } from "react-icons/fa";
 
 const { Header } = Layout;
 
-const HeaderComponent = ({ children }) => {
-  const location = useLocation();
-  const pathSegments = location.pathname.split("/").filter(Boolean);
-  const lastSegment = pathSegments[pathSegments.length - 1];
-
+const HeaderComponent = ({ children, collapsed }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigate = useNavigate();
   const isLogin = useAuth((state) => state.auth.login);
   const logout = useAuth((state) => state.logout); // Assuming your logout function is here
   const username = useAuth((state) => state.auth.username);
@@ -24,6 +21,7 @@ const HeaderComponent = ({ children }) => {
 
   const handleOk = () => {
     logout(); // Call the logout function
+    navigate("/login");
     setIsModalVisible(false); // Close the modal
   };
 
@@ -86,12 +84,15 @@ const HeaderComponent = ({ children }) => {
         ) : (
           ""
         )}
-        <h1
-          to="/"
-          className="text-slate-800 text-lg md:text-2xl font-bold hover:text-blue-400 transition-all duration-300"
-        >
-          {lastSegment}
-        </h1>
+
+        {collapsed && (
+          <Link
+            to="/"
+            className="text-slate-800 text-lg md:text-2xl font-bold cursor-pointer hover:text-blue-400 transition-all duration-300"
+          >
+            Bengkala<span className="text-blue-400">Journey</span>
+          </Link>
+        )}
 
         {/* Right Section: Login Button + Avatar Dropdown */}
         <div className="w-full flex justify-end">
@@ -135,7 +136,7 @@ const HeaderComponent = ({ children }) => {
         {/* Confirmation Modal */}
         <Modal
           title="Log Out"
-          visible={isModalVisible}
+          open={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
           okText="Yes"

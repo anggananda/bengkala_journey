@@ -22,10 +22,9 @@ const HeroScrolling = () => {
             Explore The World
           </h1>
           <Text className="text-white font-light text-center text-xs font-poppins">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus
-            cumque corporis magni veniam, facere assumenda ut nobis dolorum unde
-            quas harum id minus ab accusantium tenetur? Non soluta blanditiis
-            ipsum.
+            Discover the beauty, culture, and new experiences that await you.
+            With every step, create new stories and meaningful connections.
+            Start your journey today.
           </Text>
           <Link to="/login" className="mt-3">
             <Button

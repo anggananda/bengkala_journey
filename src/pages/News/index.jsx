@@ -1,265 +1,370 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Col,
   Row,
+  Col,
   Card,
+  Typography,
   List,
-  Input,
-  Carousel,
-  FloatButton,
-  Modal,
-  Popconfirm,
-  Drawer,
+  Avatar,
   Button,
-  Spin,
+  Skeleton,
+  Form,
+  Input,
+  Select,
+  Upload,
+  message,
+  Drawer,
+  Tooltip,
+  Image,
+  Dropdown,
 } from "antd";
+import { Link } from "react-router-dom";
 import {
-  PlusCircleOutlined,
-  SearchOutlined,
-  EditOutlined,
-  DeleteOutlined,
+  CalendarOutlined,
+  UploadOutlined,
+  InfoCircleOutlined,
+  FilterOutlined,
 } from "@ant-design/icons";
+import { getNews, postNews } from "../../services/apiService";
+import { formatDate } from "../../utils/dateUtils";
+import useAuth from "../../store/useAuth";
+const url = import.meta.env.VITE_BASE_URL;
 
+const { Text } = Typography;
 const { Meta } = Card;
-
-const dummyData = [
-  {
-    id: 1,
-    name: "Tumpukan Sampah di Sisi Barat Desa Bengkala Terbakar",
-    img: "https://www.balipost.com/wp-content/uploads/2024/10/balipostcom_tumpukan-sampah-di-sisi-barat-tpa-bengkala-terbakar_01.jpeg",
-    description:
-      " SINGARAJA, BALIPOST.com Cuaca panas ekstrim yang melanda wilayah Kabupaten Buleleng sejak beberapa pekan terakhir mengakibatkan tumpukan sampah di Tempat Pembuangan Akhir (TPA) Bengkala di Desa Bengkala, Kecamatan Kubutambahan terbakar. Bahkan sebelum kebakaran terjadi, warga sekitar mendengar suara letupan.",
-  },
-  {
-    id: 2,
-    name: "Hujan Deras mengakibatkan Pondasi Kantor Desa Bengkala Ambruk",
-    img: "https://bengkala-buleleng.desa.id/assets/files/artikel/kecil_1653878366281542221_1251485228991929_1989223881699416682_n.jpg",
-    description:
-      "Hujan Deras mengakibatkan Pondasi Kantor Desa Bengkala Ambruk. Satpol PP Kecamatan Kubutambahan Terjun Langsung kelokasi Longsor di Desa Bengkala.",
-  },
-  {
-    id: 3,
-    name: "Janger Kolok di Desa Bengkala : Sejarah",
-    img: "https://akcdn.detik.net.id/community/media/visual/2023/09/17/tari-janger-kolok-dibawakan-oleh-penyandang-disabilitas-dari-desa-bengkala_169.jpeg?w=700&q=90",
-    description:
-      "Sejarah Sekaa dan Tari Janger Kolok. Pencipta dari tari ini adalah Almarhum Wayan Nedeng yang merupakan penduduk asli Desa Bengkala.",
-  },
-];
+const { TextArea } = Input;
 
 const News = () => {
-  const [searchValue, setSearchValue] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-  const [selectedNews, setSelectedNews] = useState(null);
-  const [loading, setLoading] = useState(false); // State for loading
+  const [isDrawer, setIsDrawer] = useState(false);
+  const [form] = Form.useForm();
 
-  const showModal = (newsItem) => {
-    setSelectedNews(newsItem);
-    setIsModalVisible(true);
+  const [fileList, setFileList] = useState([]);
+  const [filePreview, setFilePreview] = useState(null);
+
+  const [news, setNews] = useState([]);
+  const [featuredNews, setFeaturedNews] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const role = useAuth((state) => state.auth.role);
+
+  console.log({ roleeee: role });
+
+  const fetchNews = async () => {
+    setIsLoading((prev) => !prev);
+    try {
+      const result = await getNews();
+      console.log(result);
+      setIsLoading((prev) => !prev);
+      setNews(result.datas.filter((item) => item.status.includes("general")));
+      setFeaturedNews(
+        result.datas.filter((item) => item.status.includes("featured"))
+      );
+    } catch (error) {
+      setIsLoading((prev) => !prev);
+      throw error;
+    }
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const handleDrawer = () => {
+    setIsDrawer((prev) => !prev);
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  const handleFileChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+    if (newFileList.length > 0) {
+      const file = newFileList[0].originFileObj;
+      setFilePreview(URL.createObjectURL(file));
+    } else {
+      setFilePreview(null);
+    }
   };
 
-  const showDrawer = () => {
-    setIsDrawerVisible(true);
+  const handleSubmit = async (values) => {
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("description", values.description);
+    formData.append("status", values.status);
+    if (fileList.length > 0) {
+      formData.append("image", fileList[0].originFileObj);
+    }
+
+    try {
+      const response = await postNews(formData);
+      message.success("File uploaded successfully!");
+      fetchNews();
+      handleDrawer();
+      form.resetFields();
+      setFileList([]);
+      setFilePreview(null);
+    } catch (error) {
+      // message.error(
+      //   error.response?.data?.error || "Failed to submit the form!"
+      // );
+      console.log(error);
+      throw error;
+    }
   };
 
-  const onCloseDrawer = () => {
-    setIsDrawerVisible(false);
-  };
-
-  const filteredData = dummyData.filter((item) =>
-    item.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
-
-  const handleEdit = (item) => {
-    setLoading(true);
-    // Simulate an API call
-    setTimeout(() => {
-      setLoading(false);
-      // Add your edit logic here
-      console.log("Editing:", item);
-      // Optionally close the modal or do something else
-    }, 2000);
-  };
-
-  const handleDelete = (item) => {
-    setLoading(true);
-    // Simulate an API call
-    setTimeout(() => {
-      setLoading(false);
-      // Add your delete logic here
-      console.log("Deleting:", item);
-      // Optionally remove the item from the list or do something else
-    }, 2000);
-  };
 
   return (
-    <div className="layout-content">
-      <Row gutter={[24, 0]}>
-        <Col xs={24} className="mb-24">
-          <Card bordered={false} className="criclebox h-full w-full">
-            <FloatButton
-              type="primary"
-              icon={<PlusCircleOutlined />}
-              onClick={showDrawer}
-            />
-            <Carousel autoplay>
-              {filteredData.map((item, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={item.img}
-                    alt={`Slide ${index + 1}`}
-                    className="h-[350px] w-full rounded-md transition-all ease-in-out duration-500"
-                  />
-                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50 rounded-md"></div>
-                </div>
-              ))}
-            </Carousel>
-
-            <Input
-              style={{ marginBottom: "10px", marginTop: "20px" }}
-              placeholder="Cari di sini..."
-              prefix={<SearchOutlined />}
-              className="header-search"
-              allowClear
-              size="large"
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-
-            <List
-              grid={{
-                gutter: 16,
-                xs: 1,
-                sm: 1,
-                md: 2,
-                lg: 3,
-                xl: 3,
-              }}
-              dataSource={filteredData}
-              renderItem={(item) => (
-                <List.Item style={{ marginBottom: "20px", marginTop: "20px" }}>
-                  <Card
-                    cover={
-                      <div className="h-[300px]">
-                        <img
-                          src={item.img}
-                          onClick={() => showModal(item)}
-                          alt={item.name}
-                          className="rounded-md h-full w-full object-cover"
-                        />
-                      </div>
-                    }
-                    style={{
-                      transition: "transform 0.3s",
-                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                    }}
-                    className="hover:scale-90 transition-all ease-in-out duration-500 cursor-pointer h-400, w-100"
-                  >
-                    <Meta
-                      title={item.name}
-                      description={
-                        <p className="line-clamp-3">{item.description}</p>
-                      }
-                    />
-                    <div className="flex justify-between mt-2">
-                      <Button
-                        type="text"
-                        icon={<EditOutlined />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(item);
-                        }}
-                      />
-                      <Popconfirm
-                        title="Are you sure to delete?"
-                        okText="Yes"
-                        cancelText="No"
-                        onConfirm={() => handleDelete(item)}
-                      >
-                        <Button
-                          type="text"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        />
-                      </Popconfirm>
-                    </div>
-                  </Card>
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      <Modal
-        title="News Details"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={900}
-        footer={null} // Disable default footer
-      >
-        <div className="mx-[30px]">
-          {loading ? (
-            <div className="flex justify-center items-center">
-              <Spin size="large" />
-            </div>
-          ) : (
-            selectedNews && (
-              <>
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <img
-                      src={selectedNews.img}
-                      alt={selectedNews.name}
-                      className="w-full h-auto rounded-md"
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <h3 className="my-5 text-xl font-semibold">
-                      {selectedNews.name}
-                    </h3>
-                    <p className="text-gray-700">{`${selectedNews.description.slice(
-                      0,
-                      100
-                    )}...`}</p>
-                  </Col>
-                </Row>
-              </>
-            )
-          )}
-        </div>
-      </Modal>
-
+    <div className="md:px-10 py-5">
       <Drawer
-        title="Add/Edit News"
-        placement="right"
-        onClose={onCloseDrawer}
-        open={isDrawerVisible}
-        width={450}
+        open={isDrawer}
+        height={600}
+        onClose={() => handleDrawer()}
+        placement="bottom"
       >
-        <div>
-          <h3>Title</h3>
-          <Input placeholder="Enter news title" />
-          <h3>Description</h3>
-          <Input.TextArea placeholder="Enter news description" rows={4} />
-          <h3>Image URL</h3>
-          <Input placeholder="Enter image URL" />
-          <Button type="primary" className="mt-4" onClick={onCloseDrawer}>
-            Save Changes
-          </Button>
+        <div className="max-w-md mx-auto p-5">
+          <Card
+            title={
+              <h3 className="text-lg font-bold text-gray-800">
+                Upload File Form
+              </h3>
+            }
+            bordered={false}
+            className="rounded-xl shadow-lg bg-white"
+          >
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              initialValues={{ status: "general" }}
+            >
+              {/* Title Input */}
+              <Form.Item
+                name="title"
+                label={
+                  <span className="flex items-center">
+                    Title&nbsp;
+                    <Tooltip title="Give your file a descriptive title">
+                      <InfoCircleOutlined className="text-gray-500" />
+                    </Tooltip>
+                  </span>
+                }
+                rules={[{ required: true, message: "Please input the title!" }]}
+              >
+                <Input
+                  placeholder="E.g., Annual Report 2024"
+                  className="rounded-md border-gray-300 focus:ring focus:ring-blue-500 focus:border-blue-500"
+                />
+              </Form.Item>
+
+              {/* Description Input */}
+              <Form.Item
+                name="description"
+                label="Description"
+                rules={[
+                  { required: true, message: "Please input the description!" },
+                ]}
+              >
+                <Input.TextArea
+                  rows={4}
+                  placeholder="Write a brief description of the file..."
+                  className="rounded-md border-gray-300 focus:ring focus:ring-blue-500 focus:border-blue-500"
+                />
+              </Form.Item>
+
+              {/* Status Input */}
+              <Form.Item
+                name="status"
+                label="Status"
+                rules={[
+                  { required: true, message: "Please input the status!" },
+                ]}
+              >
+                <Input
+                  placeholder=""
+                  className="rounded-md border-gray-300 focus:ring focus:ring-blue-500 focus:border-blue-500"
+                />
+              </Form.Item>
+
+              {/* Drag and Drop File Upload */}
+              <Form.Item
+                name="image"
+                label={
+                  <span className="flex items-center">
+                    Upload File&nbsp;
+                    <Tooltip title="Only one file is allowed. Max size: 10MB">
+                      <InfoCircleOutlined className="text-gray-500" />
+                    </Tooltip>
+                  </span>
+                }
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+                rules={[{ required: true, message: "Please upload a file!" }]}
+              >
+                <Upload
+                  beforeUpload={() => false}
+                  maxCount={1}
+                  onChange={handleFileChange}
+                  className="border-2 border-dashed border-gray-400 p-6 rounded-md flex flex-col items-center justify-center cursor-pointer"
+                  showUploadList={false} // Hide default file list
+                >
+                  <div className="text-center">
+                    <UploadOutlined className="text-4xl text-blue-500" />
+                    <p className="mt-2 text-gray-600">
+                      Drag & drop your file here, or click to select one
+                    </p>
+                  </div>
+                </Upload>
+                {filePreview && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold">File Preview:</h4>
+                    <img
+                      src={filePreview}
+                      alt="File Preview"
+                      className="w-full h-auto mt-2 border rounded-md"
+                    />
+                  </div>
+                )}
+              </Form.Item>
+
+              {/* Submit Button */}
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
+                >
+                  Submit
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
         </div>
       </Drawer>
+
+      <Row gutter={[24, 0]}>
+        <Col xs={24} sm={24} md={16}>
+          <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+        </Col>
+        <Col md={8}>
+          <Text className="font-semibold text-slate-700 font-poppins text-lg">
+            Other featured news
+          </Text>
+          <div className="mt-4">
+            {featuredNews.length > 0 && !isLoading ? (
+              <List
+                grid={{
+                  gutter: 10,
+                  md: 1,
+                  lg: 1,
+                  xl: 1,
+                }}
+                dataSource={featuredNews}
+                renderItem={(item) => (
+                  <List.Item>
+                    <Link to={`/detailnews/${item.ID}`}>
+                      <div className="flex justify-start items-center gap-2">
+                        <div className="">
+                          <Image
+                            placeholder={
+                              <Image
+                                preview={false}
+                                src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png?x-oss-process=image/blur,r_50,s_50/quality,q_1/resize,m_mfit,h_200,w_200"
+                                width={60}
+                                height={60}
+                              />
+                            }
+                            src={`${url}/${item.image}`}
+                            width={60}
+                            height={60}
+                            className="object-cover rounded-md"
+                          />
+                        </div>
+                        <div className="flex flex-col justify-center items-start">
+                          <div className="flex gap-2 justify-start items-center">
+                            <CalendarOutlined className="text-gray-400" />
+                            <Text className="text-gray-400 text-xs font-poppins">
+                              {formatDate(item.CreatedAt)}
+                            </Text>
+                          </div>
+                          <Text className="font-normal text-slate-600">
+                            {item.title}
+                          </Text>
+                        </div>
+                      </div>
+                    </Link>
+                  </List.Item>
+                )}
+              />
+            ) : isLoading ? (
+              <Skeleton active={true} />
+            ) : (
+              ""
+            )}
+          </div>
+        </Col>
+      </Row>
+      <div className="px-4 mt-4">
+        <Row
+          gutter={[24, 0]}
+          className="flex justify-between items-center mb-3"
+        >
+          <Text className="text-slate-800 font-semibold font-poppins text-xl">
+            Recent News
+          </Text>
+          <div className="flex gap-2 justify-center items-center">
+            <Button>All News</Button>
+
+            <Button onClick={() => handleDrawer()} type="primary">
+              Post News
+            </Button>
+          </div>
+        </Row>
+        <Row gutter={[24, 0]} className="">
+          <Col md={24}>
+            {news.length > 0 && !isLoading ? (
+              <List
+                grid={{
+                  gutter: 25,
+                  sm: 1,
+                  md: 3,
+                  lg: 3,
+                  xl: 3,
+                }}
+                dataSource={news}
+                pagination={{ pageSize: 6 }}
+                renderItem={(item) => (
+                  <List.Item>
+                    <Link to={`/detailnews/${item.ID}`}>
+                      <div className="">
+                        <div className="rounded-md h-[250px] overflow-hidden mb-3">
+                          <img
+                            src={`${url}/${item.image}`}
+                            className="h-full w-full object-cover hover:scale-105 transition-all ease-in-out duration-500"
+                            alt=""
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Text className="text-base font-medium font-poppins">
+                            {item.title}
+                          </Text>
+                          <Text className="text-gray-500 font-light text-xs font-poppins">
+                            {`${item.description.slice(0, 100)}...`}
+                          </Text>
+                        </div>
+                        <div className="mt-3">
+                          <Text className="text-xs font-poppins text-slate-700">
+                            {formatDate(item.CreatedAt)}
+                          </Text>
+                        </div>
+                      </div>
+                    </Link>
+                  </List.Item>
+                )}
+              />
+            ) : isLoading ? (
+              <Skeleton active={true} />
+            ) : (
+              <h1>no data</h1>
+            )}
+          </Col>
+        </Row>
+      </div>
     </div>
   );
 };
