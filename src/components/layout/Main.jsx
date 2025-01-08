@@ -5,29 +5,24 @@ import FooterComponent from "../../components/layout/Footer";
 import Sidenav from "../../components/layout/SideNav";
 import HeaderComponent from "./Header";
 import useAuth from "../../store/useAuth";
+import { useLocation } from "react-router-dom"; // Import useLocation
 
-const { Content, Sider, Header } = Layout;
+const { Content, Sider } = Layout;
 const { Text } = Typography;
 
 const MainLayout = ({ children }) => {
   const login = useAuth((state) => state.auth.login);
   const [collapsed, setCollapsed] = useState(false);
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [marginLeft, setMarginLeft] = useState(250); // Default margin for desktop
+  const location = useLocation(); // Get current location
 
   const toggleDrawer = () => setDrawerOpen(!isDrawerOpen);
   const toggleCollapse = () => setCollapsed(!collapsed);
 
-  const updateMarginLeft = () => {
-    const isMobile = window.innerWidth <= 768;
-    setMarginLeft(login ? (isMobile || collapsed ? 0 : 250) : 0);
-  };
-
+  // Scroll to top on route change
   useEffect(() => {
-    updateMarginLeft(); // Initial calculation
-    window.addEventListener("resize", updateMarginLeft); // Update on resize
-    return () => window.removeEventListener("resize", updateMarginLeft); // Cleanup
-  }, [login, collapsed]);
+    window.scrollTo(0, 0);
+  }, [location]); // Dependency on location to trigger on route change
 
   return (
     <Layout className="">
@@ -78,69 +73,10 @@ const MainLayout = ({ children }) => {
           )}
         </HeaderComponent>
         {/* Content */}
-        <Content className="p-2 bg-gray-100 overflow-auto">{children}</Content>
+        <Content className=" bg-gray-100 overflow-auto">{children}</Content>
         <FooterComponent />
       </Layout>
     </Layout>
-
-    // <Layout className="min-h-screen">
-    //   {/* Sidebar Navigation */}
-    //   {login && (
-    //     <>
-    //       {/* Sidebar for Desktop */}
-    //       <Sider
-    //         width={260}
-    //         collapsedWidth={80}
-    //         className="hidden lg:flex bg-white shadow-md flex-col h-full transition-all"
-    //         collapsed={collapsed}
-    //       >
-    //         <div className="flex-1 overflow-y-auto">
-    //           <Sidenav collapsed={collapsed} setCollapsed={setCollapsed} />
-    //         </div>
-    //       </Sider>
-
-    //       {/* Mobile Drawer */}
-    //       <Drawer
-    //         title="Bengkala Journey"
-    //         placement="left"
-    //         onClose={toggleDrawer}
-    //         open={isDrawerOpen}
-    //         bodyStyle={{ padding: 0 }}
-    //         className="lg:hidden"
-    //       >
-    //         <Sidenav collapsed={false} />
-    //       </Drawer>
-    //     </>
-    //   )}
-
-    //   {/* Main Layout */}
-    //   <Layout
-    //     className="flex flex-col transition-all"
-    //     // style={{
-    //     //   marginLeft: login && !collapsed && window.innerWidth > 768 ? 250 : 0,
-    //     // }}
-    //   >
-    //     {/* Header */}
-    //     <HeaderComponent>
-    //       {login && (
-    //         <Button
-    //           type="text"
-    //           icon={<MenuOutlined />}
-    //           className="lg:hidden"
-    //           onClick={toggleDrawer}
-    //         />
-    //       )}
-    //     </HeaderComponent>
-
-    //     {/* Content */}
-    //     <Content className="flex-1 overflow-auto bg-gray-50 p-4">
-    //       {children}
-    //     </Content>
-
-    //     {/* Footer */}
-
-    //   </Layout>
-    // </Layout>
   );
 };
 

@@ -5,6 +5,7 @@ import {
   ArrowRightOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  HeartOutlined,
 } from "@ant-design/icons";
 import { GiTempleGate } from "react-icons/gi";
 import {
@@ -32,6 +33,11 @@ const menuItems = [
         label: "Forum Discussion",
         icon: <FaUsers size={18} />,
       },
+      {
+        key: "/like",
+        label: "Likes",
+        icon: <HeartOutlined size={18} />,
+      },
     ],
   },
   {
@@ -54,7 +60,7 @@ const menuItems = [
     category: "More",
     items: [
       { key: "/about", label: "About Us", icon: <FaInfoCircle size={18} /> },
-      { key: "/report", label: "Report", icon: <FaChartBar size={18} /> },
+      // { key: "/report", label: "Report", icon: <FaChartBar size={18} /> },
     ],
   },
   {
@@ -104,7 +110,7 @@ const Sidenav = ({ collapsed, setCollapsed }) => {
                 alignItems: "center",
                 justifyContent: "center",
               }}
-              className={`transition-colors my-2 duration-300 rounded-md${
+              className={`transition-colors my-2 ease-out duration-500 rounded-md${
                 selectedKey === key
                   ? "bg-blue-500 text-white"
                   : "text-gray-600 hover:bg-gray-100"

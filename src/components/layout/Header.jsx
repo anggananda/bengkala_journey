@@ -5,6 +5,8 @@ import { LoginOutlined } from "@ant-design/icons";
 import useAuth from "../../store/useAuth";
 import { CiUser } from "react-icons/ci";
 import { FaUserCircle, FaCog, FaSignOutAlt } from "react-icons/fa";
+import useProfile from "../../store/useProfile";
+const url = import.meta.env.VITE_BASE_URL;
 
 const { Header } = Layout;
 
@@ -14,6 +16,9 @@ const HeaderComponent = ({ children, collapsed }) => {
   const isLogin = useAuth((state) => state.auth.login);
   const logout = useAuth((state) => state.logout); // Assuming your logout function is here
   const username = useAuth((state) => state.auth.username);
+  const avatar = useProfile((state) => state.profile.photoProfile);
+
+  console.log({isinya_apa: avatar});
 
   const showConfirmLogout = () => {
     setIsModalVisible(true); // Show the confirmation modal
@@ -123,9 +128,7 @@ const HeaderComponent = ({ children, collapsed }) => {
                     className="bg-white cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
                     // icon={<CiUser size={20} className="text-black" />}
                     size={40}
-                    src={
-                      <img src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                    }
+                    src={<img src={`${url}/${avatar}`} />}
                   />
                 </Space>
               </div>

@@ -3,7 +3,7 @@ import { Modal, Typography, Button } from 'antd';
 
 const {Text} = Typography
 
-const ModalDelete = ({modal, handleDelete, handleModal, }) => {
+const ModalDelete = ({modal, handleDelete, handleModal, subject}) => {
   return (
     <Modal
         open={modal}
@@ -15,7 +15,7 @@ const ModalDelete = ({modal, handleDelete, handleModal, }) => {
         <div className="flex flex-col justify-center items-center p-6">
           <div className="mb-4 w-[250px] text-center">
             <Text className="text-lg font-bold text-gray-800 font-poppins">
-              Do you really want to delete the user?
+              Do you really want to delete the {subject}?
             </Text>
           </div>
 

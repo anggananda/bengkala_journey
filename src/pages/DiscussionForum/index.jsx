@@ -18,6 +18,8 @@ import {
   Dropdown,
   FloatButton,
   Skeleton,
+  Popconfirm,
+  notification,
 } from "antd";
 
 import {
@@ -30,117 +32,214 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
   FilterOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
-import { getForums } from "../../services/apiService";
+import {
+  deleteForum,
+  getAllReply,
+  getContribute,
+  getForums,
+  postForum,
+  updateForum,
+} from "../../services/apiService";
+import useAuth from "../../store/useAuth";
+import { Link } from "react-router-dom";
+import { formatDate } from "../../utils/dateUtils";
+const url = import.meta.env.VITE_BASE_URL;
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
 
-const forums = [
-  {
-    id: 1,
-    subject: "subject 1",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut?",
-    img: "./imgs/angga.png",
-  },
-  {
-    id: 2,
-    subject: "subject 2",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut?",
-    img: "./imgs/anggie.jpeg",
-  },
-  {
-    id: 3,
-    subject: "subject 3",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut?",
-    img: "./imgs/angga.png",
-  },
-  {
-    id: 4,
-    subject: "subject 4",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut?",
-    img: "./imgs/anggie.jpeg",
-  },
-  {
-    id: 5,
-    subject: "subject 5",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut? Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores id nostrum iure fugiat aspernatur voluptatum deserunt ducimus illo modi ut?",
-    img: "./imgs/angga.png",
-  },
-];
-
-const users = [
-  {
-    id: 1,
-    img: "./imgs/angga.png",
-    username: "Dwiangga",
-    email: "anggadek867@gmail.com",
-  },
-  {
-    id: 2,
-    img: "./imgs/anggie.jpeg",
-    username: "Anggie",
-    email: "anggadek867@gmail.com",
-  },
-  {
-    id: 3,
-    img: "./imgs/angga.png",
-    username: "Candra",
-    email: "anggadek867@gmail.com",
-  },
-  {
-    id: 4,
-    img: "./imgs/angga.png",
-    username: "Cahya",
-    email: "anggadek867@gmail.com",
-  },
-  {
-    id: 5,
-    img: "./imgs/angga.png",
-    username: "Yastika",
-    email: "anggadek867@gmail.com",
-  },
-];
-
 const DiscussionForum = () => {
+  const [form] = Form.useForm();
   const [forums, setForums] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const userID = useAuth((state) => state.auth.id);
+  const role = useAuth((state) => state.auth.role);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDesc, setIsDesc] = useState(true);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [searchForum, setSearchForum] = useState("");
+  const [dropdownVisible, setDropdownVisible] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
+  const [idSelected, setIdSelected] = useState(null);
+  const [contribute, setContribute] = useState([]);
+  const [isContribute, setIsContribute] = useState(false);
+  const [reply, setReply] = useState([]);
+
+  const tagColors = {
+    adat: "gold",
+    sejarah: "blue",
+    seni: "purple",
+    wisata: "green",
+    lainnya: "gray",
+  };
 
   const fetchForums = async () => {
     setIsLoading(true);
     try {
       const result = await getForums();
-      console.log(result.datas);
-      setForums(result.datas);
+      const filteredForums = result.datas.filter((item) => !item.deleted_at);
+      setForums(sortForums(filteredForums, isDesc));
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+      console.error(error);
+    }
+  };
+
+  const sortForums = (data, isDescending) => {
+    return data.sort((a, b) => {
+      const dateA = new Date(a.created_at);
+      const dateB = new Date(b.created_at);
+      return isDescending ? dateB - dateA : dateA - dateB;
+    });
+  };
+
+  const toggleSortOrder = () => {
+    setIsDesc((prev) => !prev);
+    setForums(sortForums([...forums], !isDesc));
+  };
+
+  const fetchContribute = async () => {
+    setIsContribute(true);
+    try {
+      const result = await getContribute(); // Mengambil data dari API
+      console.log({ testing: result });
+
+      // Filter untuk menghapus duplikat berdasarkan username
+      const uniqueData = Array.from(
+        new Map(result.datas.map((item) => [item.username, item])).values()
+      );
+
+      // Masukkan data tanpa duplikat ke state
+      setContribute(uniqueData);
+      setIsContribute(false);
+    } catch (error) {
+      setIsContribute(false);
+      console.error("Error fetching contributions:", error);
       throw error;
     }
   };
+
+  const fetchReply = async () => {
+    try {
+      const result = await getAllReply();
+      console.log({ testbang: result });
+
+      // Create a unique array based on forum_id and user_id
+      const uniqueData = Array.from(
+        new Map(
+          result.datas.map((item) => [`${item.forum_id}_${item.user_id}`, item])
+        ).values()
+      );
+
+      // Filter out replies that have deleted_at not empty
+      const filteredReplies = uniqueData.filter(
+        (item) => item.deleted_at === ""
+      );
+
+      // Set the filtered replies to state
+      setReply(filteredReplies);
+    } catch (error) {
+      console.error("Error fetching replies:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchContribute();
+  }, []);
 
   useEffect(() => {
     fetchForums();
   }, []);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const onFinish = (values) => {
-    console.log("Form Values:", values);
+  useEffect(() => {
+    fetchReply();
+  }, []);
+
+  const postNewForum = async (values) => {
+    const formData = new FormData();
+    formData.append("subject", values.subject);
+    formData.append("detail", values.detail);
+    formData.append("tag", values.tag);
+    formData.append("user_id", userID);
+    try {
+      if (isEdit) {
+        const result = await updateForum(formData, idSelected);
+      } else {
+        const result = await postForum(formData);
+      }
+      setIsOpen(false);
+      fetchForums();
+      notification.success({
+        message: "Successfully",
+        description: "Success sumbit forum",
+      });
+      form.resetFields();
+    } catch (error) {
+      notification.error({
+        message: "Failed",
+        description: "Failed submit forum",
+      });
+      throw error;
+    }
   };
 
-  const [isDesc, setIsDesc] = useState(true);
-
-  const [selectedTags, setSelectedTags] = useState([]);
+  const handleDrawer = () => {
+    setIsOpen((prev) => !prev);
+  };
 
   // Mengelola perubahan tag yang dipilih
   const handleTagChange = (value) => {
     setSelectedTags(value);
+  };
+
+  const filteredForums = forums.filter((item) =>
+    item.subject.toLowerCase().includes(searchForum.toLowerCase())
+  );
+
+  const onClose = () => {
+    if (isEdit) {
+      form.resetFields();
+      setIsEdit(false);
+      setIdSelected(null);
+    }
+    handleDrawer();
+  };
+
+  const handleMoreOptionsClick = (id) => {
+    setDropdownVisible((prev) => (prev === id ? null : id));
+  };
+
+  const handleEdit = async (record) => {
+    setIsEdit(true);
+    setIdSelected(record.forum_id);
+    form.setFieldValue("subject", record.subject);
+    form.setFieldValue("detail", record.subject);
+    form.setFieldValue("tag", record.tag);
+    handleDrawer();
+    setDropdownVisible(null);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const result = await deleteForum(id);
+      fetchForums();
+      notification.success({
+        message: "Successfully",
+        description: "Success delete forum",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Failed",
+        description: "Failed to delete forum",
+      });
+      throw error;
+    }
   };
 
   const dropdownContent = (
@@ -162,6 +261,10 @@ const DiscussionForum = () => {
     </div>
   );
 
+  const getColor = (tag) => {
+    return tagColors[tag.toLowerCase()] || "red";
+  };
+
   return (
     <div className="overflow-hidden">
       {/* Float Button */}
@@ -169,7 +272,7 @@ const DiscussionForum = () => {
       {/* Form Add New Forum */}
       <Drawer
         open={isOpen}
-        onClose={() => setIsOpen((prev) => !prev)}
+        onClose={() => onClose()}
         placement="bottom"
         bodyStyle={{ padding: "24px", background: "#f5f5f5" }}
         height="80vh"
@@ -178,8 +281,9 @@ const DiscussionForum = () => {
           <Title level={3}>Tambah Forum Diskusi</Title>
         </div>
         <Form
+          form={form}
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={postNewForum}
           style={{
             background: "#fff",
             padding: "20px",
@@ -196,15 +300,13 @@ const DiscussionForum = () => {
           </Form.Item>
 
           <Form.Item
-            label="Deskripsi"
-            name="description"
-            rules={[
-              { required: true, message: "Deskripsi tidak boleh kosong!" },
-            ]}
+            label="Detail"
+            name="detail"
+            rules={[{ required: true, message: "Detail tidak boleh kosong!" }]}
           >
             <TextArea
               rows={4}
-              placeholder="Masukkan deskripsi diskusi"
+              placeholder="Masukkan Detail diskusi"
               style={{ resize: "none" }}
             />
           </Form.Item>
@@ -253,26 +355,19 @@ const DiscussionForum = () => {
             className="p-4 text-gray-400 mb-2"
             allowClear
             placeholder="search forum..."
+            onChange={(e) => setSearchForum(e.target.value)}
             prefix={<SearchOutlined />}
           />
           <Row className="mb-5 flex justify-end items-center px-2" gutter={16}>
             <Button
               className="mr-2"
               icon={
-                isDesc ? <SortAscendingOutlined /> : <SortDescendingOutlined />
+                isDesc ? <SortDescendingOutlined /> : <SortAscendingOutlined />
               }
-              onClick={() => setIsDesc((prev) => !prev)}
+              onClick={toggleSortOrder}
             >
               Sort
             </Button>
-
-            <Dropdown
-              overlay={dropdownContent}
-              trigger={["click"]}
-              placement="bottomRight"
-            >
-              <Button icon={<FilterOutlined />}>Filter</Button>
-            </Dropdown>
           </Row>
           {!isLoading && forums.length > 0 ? (
             <List
@@ -283,14 +378,54 @@ const DiscussionForum = () => {
                 xl: 1,
                 xxl: 1,
               }}
-              dataSource={forums}
-              pagination={{ pageSize: 6}}
+              dataSource={filteredForums}
+              pagination={{ pageSize: 6 }}
               renderItem={(item) => (
                 <List.Item>
                   <Card>
-                    <Text className="text-3xl font-semibold text-slate-800 font-poppins">
-                      {item.subject}
-                    </Text>
+                    <div className="flex justify-between items-center">
+                      <Text className="text-3xl font-semibold text-slate-800 font-poppins">
+                        {item.subject}
+                      </Text>
+
+                      {item.user_id === userID ||
+                      role === "admin" ||
+                      role === "super admin" ? (
+                        <div className="flex justify-end">
+                          <MoreOutlined
+                            className="text-xl cursor-pointer"
+                            onClick={() =>
+                              handleMoreOptionsClick(item.forum_id)
+                            }
+                          />
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {dropdownVisible === item.forum_id && (
+                        <div className="absolute right-0 mt-32 bg-white border rounded shadow-lg z-10">
+                          <button
+                            onClick={() => handleEdit(item)}
+                            className="block px-6 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                          >
+                            <EditOutlined className="mr-2" />
+                            Edit
+                          </button>
+                          <Popconfirm
+                            title="Delete the Forum"
+                            description="Are you sure to delete this forum?"
+                            onConfirm={() => handleDelete(item.forum_id)}
+                            okText="Delete"
+                            cancelText="Cancle"
+                          >
+                            <button className="block px-6 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                              <DeleteOutlined className="mr-2" />
+                              Delete
+                            </button>
+                          </Popconfirm>
+                        </div>
+                      )}
+                    </div>
                     <Row
                       gutter={[24, 0]}
                       className="flex justify-between items-center my-5"
@@ -298,34 +433,35 @@ const DiscussionForum = () => {
                       <Col className="flex justify-center items-center gap-4">
                         <Avatar
                           size={50}
-                          src={
-                            <Image
-                              src="./imgs/angga.png"
-                              className="w-full h-full object-cover"
-                            />
-                          }
+                          src={`${url}/${item.avatar_url}`}
                           className="shadow-md"
-                          shape="square"
+                          // shape="square"
                         />
 
                         <div className="flex flex-col justify-center items-start">
                           <Text className="font-semibold text-gray-600">
-                            Username
+                            {item.first_name} {item.last_name}
                           </Text>
                           <Text className="font-light text-gray-400">
-                            6 hours ago
+                            {formatDate(item.created_at)}
                           </Text>
                         </div>
                       </Col>
                       <Col>
-                        <Tag color="magenta">magenta</Tag>
-                        <Tag color="red">red</Tag>
-                        <Tag color="volcano">volcano</Tag>
+                        {item.tag.split(",").map((tag, index) => (
+                          <Tag color={getColor(tag.trim())} key={index}>
+                            {tag.trim()}
+                          </Tag>
+                        ))}
                       </Col>
                     </Row>
 
                     <Text className="font-poppins font-light justify-evenly">
-                      {`${item.detail.slice(0, 350)}...`}
+                      {`${
+                        item.detail.length >= 1000
+                          ? `${item.detail.slice(0, 1000)}...`
+                          : item.detail.slice(0, 1000)
+                      }`}
                     </Text>
 
                     <Row
@@ -333,12 +469,11 @@ const DiscussionForum = () => {
                       className="flex justify-between items-center my-5"
                     >
                       <Col className="flex justify-center items-center gap-4">
-                        <Button>
-                          <FileMarkdownOutlined />
-                        </Button>
-                        <Button>
-                          <MessageOutlined /> Add Response
-                        </Button>
+                        <Link to={`/detail-forums/${item.forum_id}`}>
+                          <Button>
+                            <MessageOutlined /> Add Response
+                          </Button>
+                        </Link>
                       </Col>
                       <Col>
                         <Avatar.Group
@@ -355,28 +490,30 @@ const DiscussionForum = () => {
                             },
                           }}
                         >
-                          <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                          <Avatar
-                            style={{
-                              backgroundColor: "#f56a00",
-                            }}
-                          >
-                            K
-                          </Avatar>
-                          <Tooltip title="Ant User" placement="top">
-                            <Avatar
-                              style={{
-                                backgroundColor: "#87d068",
-                              }}
-                              icon={<UserOutlined />}
-                            />
-                          </Tooltip>
-                          <Avatar
-                            style={{
-                              backgroundColor: "#1677ff",
-                            }}
-                            icon={<AntDesignOutlined />}
-                          />
+                          {reply
+                            .filter((user) => user.forum_id === item.forum_id) // Filter reply berdasarkan forum_id
+                            .map((user, index) => (
+                              <Tooltip
+                                title={user.first_name}
+                                key={index}
+                                placement="top"
+                              >
+                                <Avatar
+                                  style={{
+                                    backgroundColor: user.color || "#1677ff", // Warna default jika tidak ada warna
+                                  }}
+                                  src={
+                                    user.avatar_url
+                                      ? `${url}/${user.avatar_url}`
+                                      : null
+                                  } // URL avatar jika tersedia
+                                  icon={!user.avatar_url && <UserOutlined />} // Ikon default jika avatar kosong
+                                >
+                                  {!user.avatar_url && user.first_name?.[0]}{" "}
+                                  {/* Tampilkan inisial jika avatar kosong */}
+                                </Avatar>
+                              </Tooltip>
+                            ))}
                         </Avatar.Group>
                       </Col>
                     </Row>
@@ -391,8 +528,8 @@ const DiscussionForum = () => {
           )}
         </Col>
 
-        <Col md={6} className="">
-          <Card className="my-4 hidden md:block">
+        <Col md={6} className="mr-4 md:relative">
+          <Card className="my-4 mr-4 hidden md:block md:fixed">
             <Button
               type="primary"
               className="w-full"
@@ -405,38 +542,44 @@ const DiscussionForum = () => {
               <Text className="font-semibold font-poppins text-slate-600">
                 User forum contributions
               </Text>
-              <List
-                className="mt-4"
-                grid={{
-                  gutter: 10,
-                  sm: 1,
-                  md: 1,
-                  lg: 1,
-                  xl: 1,
-                }}
-                dataSource={users}
-                renderItem={(item) => (
-                  <List.Item>
-                    <Row>
-                      <div className="flex justify-center items-center gap-4">
-                        <Avatar
-                          className="shadow-md"
-                          size={40}
-                          src={<Image src={item.img} />}
-                        />
-                        <div className="flex flex-col ">
-                          <Text className=" text-slate-700">
-                            {item.username}
-                          </Text>
-                          <Text className="font-light text-[12px] text-gray-400">
-                            {item.email}
-                          </Text>
+              {contribute.length > 0 && !isContribute ? (
+                <List
+                  className="mt-4"
+                  grid={{
+                    gutter: 10,
+                    sm: 1,
+                    md: 1,
+                    lg: 1,
+                    xl: 1,
+                  }}
+                  dataSource={contribute}
+                  renderItem={(item) => (
+                    <List.Item>
+                      <Row>
+                        <div className="flex justify-center items-center gap-4">
+                          <Avatar
+                            className="shadow-md"
+                            size={40}
+                            src={<Image src={`${url}/${item.avatar_url}`} />}
+                          />
+                          <div className="flex flex-col ">
+                            <Text className=" text-slate-700">
+                              {item.username}
+                            </Text>
+                            <Text className="font-light text-[12px] text-gray-400">
+                              {item.email}
+                            </Text>
+                          </div>
                         </div>
-                      </div>
-                    </Row>
-                  </List.Item>
-                )}
-              />
+                      </Row>
+                    </List.Item>
+                  )}
+                />
+              ) : isContribute ? (
+                <Skeleton active={true} />
+              ) : (
+                "no data"
+              )}
             </div>
           </Card>
         </Col>

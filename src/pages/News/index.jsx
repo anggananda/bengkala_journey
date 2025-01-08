@@ -17,6 +17,7 @@ import {
   Tooltip,
   Image,
   Dropdown,
+  Carousel,
 } from "antd";
 import { Link } from "react-router-dom";
 import {
@@ -107,7 +108,6 @@ const News = () => {
       throw error;
     }
   };
-
 
   return (
     <div className="md:px-10 py-5">
@@ -239,7 +239,13 @@ const News = () => {
 
       <Row gutter={[24, 0]}>
         <Col xs={24} sm={24} md={16}>
-          <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+          <Carousel arrows infinite autoplay>
+            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+          </Carousel>
         </Col>
         <Col md={8}>
           <Text className="font-semibold text-slate-700 font-poppins text-lg">

@@ -200,7 +200,7 @@ const UserManagement = () => {
   return (
     <div className="p-4">
       <Drawer
-      height={500}
+        height={500}
         open={isDrawer}
         onClose={onClose}
         placement="bottom"
@@ -291,6 +291,7 @@ const UserManagement = () => {
       </Drawer>
 
       <ModalDelete
+        subject={"User"}
         modal={modal}
         handleDelete={handleDelete}
         handleModal={handleModal}

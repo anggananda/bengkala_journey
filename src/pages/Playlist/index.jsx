@@ -70,22 +70,22 @@ const Playlist = () => {
     setIsModalVisible(false);
   };
 
-  // const filteredPlaylist = playlists.filter((item) =>
-  //   item.name.toLowerCase().includes(searchItem.toLowerCase()) || selectedTags !== "all" && item.genre.toLowerCase().includes(selectedTags.toLowerCase())
-  // );
+  const filteredPlaylist = playlists.filter((item) =>
+    item.name.toLowerCase().includes(searchItem.toLowerCase())
+  );
 
-  const filteredPlaylist = playlists.filter((item) => {
-    const matchesName = item.name
-      .toLowerCase()
-      .includes(searchItem.toLowerCase());
-    const matchesGenre =
-      selectedTags === "all" ||
-      selectedTags === "" ||
-      item.genre.toLowerCase().includes(selectedTags.toLowerCase());
-    return matchesName && matchesGenre;
-  });
+  // const filteredPlaylist = playlists.filter((item) => {
+  //   const matchesName = item.name
+  //     .toLowerCase()
+  //     .includes(searchItem.toLowerCase());
+  //   const matchesGenre =
+  //     selectedTags === "all" ||
+  //     selectedTags === "" ||
+  //     item.genre.toLowerCase().includes(selectedTags.toLowerCase());
+  //   return matchesName && matchesGenre;
+  // });
 
-  const [selectedTags, setSelectedTags] = useState("all");
+  // const [selectedTags, setSelectedTags] = useState("all");
 
   return (
     <div className="p-4">
@@ -134,7 +134,7 @@ const Playlist = () => {
           Playlist for you
         </h2>
       </div>
-      <Select
+      {/* <Select
         style={{
           width: "100%",
           borderRadius: "8px",
@@ -151,57 +151,59 @@ const Playlist = () => {
           { value: "Ceremonial", label: "Ceremonial" },
           { value: "Others", label: "Others" },
         ]}
-      />
-
-      {playlists.length > 0 && !isLoading ? (
-        <List
-          grid={{
-            gutter: 25,
-            sm: 1,
-            md: 3,
-            lg: 3,
-            xl: 3,
-          }}
-          pagination={{ pageSize: 6 }}
-          dataSource={filteredPlaylist}
-          renderItem={(item) => (
-            <List.Item>
-              <Card
-                hoverable
-                className="rounded-lg shadow-lg border border-gray-200"
-                cover={
-                  <div className="rounded-md overflow-hidden">
-                    <ReactPlayer
-                      url={item.url}
-                      width="100%"
-                      height="200px"
-                      light={item.thumbnail} // Menampilkan thumbnail sebagai placeholder
-                      controls
-                    />
-                  </div>
-                }
-                onClick={() => showModal(item)}
-              >
-                <div className="p-2">
-                  <h2 className="text-lg font-semibold text-gray-800 truncate">
-                    {item.name}
-                  </h2>
-                  <p className="text-sm text-gray-600 mt-1 truncate">
-                    <strong>Genre:</strong> {item.genre}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-2 line-clamp-3">
-                    {item.description}
-                  </p>
-                </div>
-              </Card>
-            </List.Item>
+      /> */}
+      <Row gutter={[24, 0]} className="">
+        <Col md={24}>
+          {playlists.length > 0 && !isLoading ? (
+            <List
+              grid={{
+                gutter: 25,
+                sm: 1,
+                md: 3,
+                lg: 3,
+                xl: 3,
+              }}
+              pagination={{ pageSize: 6 }}
+              dataSource={filteredPlaylist}
+              renderItem={(item) => (
+                <List.Item>
+                  <Card
+                    className="rounded-lg shadow-lg border border-gray-200"
+                    cover={
+                      <div className="rounded-md overflow-hidden">
+                        <ReactPlayer
+                          url={item.url}
+                          width="100%"
+                          height="200px"
+                          light={item.thumbnail} // Menampilkan thumbnail sebagai placeholder
+                          controls
+                        />
+                      </div>
+                    }
+                    onClick={() => showModal(item)}
+                  >
+                    <div className="p-2">
+                      <h2 className="text-lg font-semibold text-gray-800 truncate">
+                        {item.name}
+                      </h2>
+                      <p className="text-sm text-gray-600 mt-1 truncate">
+                        <strong>Genre:</strong> {item.genre}
+                      </p>
+                      <p className="text-sm text-gray-500 mt-2 line-clamp-3">
+                        {item.description}
+                      </p>
+                    </div>
+                  </Card>
+                </List.Item>
+              )}
+            />
+          ) : isLoading ? (
+            <Skeleton active={true} />
+          ) : (
+            "no data"
           )}
-        />
-      ) : isLoading ? (
-        <Skeleton active={true} />
-      ) : (
-        "no data"
-      )}
+        </Col>
+      </Row>
 
       {/* Modal */}
       <Modal

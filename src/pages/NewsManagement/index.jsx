@@ -11,12 +11,18 @@ import {
   Modal,
   Drawer,
   Form,
+  Tooltip,
+  Upload,
+  Select,
+  Image,
 } from "antd";
 import {
   SearchOutlined,
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
+  InfoCircleOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import {
   deleteUser,
@@ -24,6 +30,9 @@ import {
   editUserRegister,
   register,
   getNews,
+  postNews,
+  deleteNews,
+  updateNews,
 } from "../../services/apiService";
 import { formatDate } from "../../utils/dateUtils";
 import useAuth from "../../store/useAuth";
@@ -31,7 +40,11 @@ import ModalDelete from "../../components/ModalDelete";
 
 const { Text } = Typography;
 
+const url = import.meta.env.VITE_BASE_URL;
+
 const UserManagement = () => {
+  const [fileList, setFileList] = useState([]);
+  const [filePreview, setFilePreview] = useState(null);
   const [form] = Form.useForm();
   const [news, setNews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,8 +68,9 @@ const UserManagement = () => {
     setIsEdit(true);
     setIsDrawer((prev) => !prev);
     setIdSelected(record.ID);
-    form.setFieldValue("username", record.username);
-    form.setFieldValue("role", record.role);
+    form.setFieldValue("title", record.title);
+    form.setFieldValue("description", record.description);
+    form.setFieldValue("status", record.status);
   };
 
   const onClose = () => {
@@ -64,16 +78,20 @@ const UserManagement = () => {
       form.resetFields();
       setIsEdit(false);
       setIdSelected(null);
+      setFilePreview(null);
     }
     setIsDrawer((prev) => !prev);
   };
 
   const fetchNews = async () => {
+    setIsLoading(true);
     try {
       const result = await getNews();
       console.log(result.datas);
       setNews(result.datas);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       throw error;
     }
   };
@@ -82,29 +100,73 @@ const UserManagement = () => {
     fetchNews();
   }, []);
 
-  const handleSubmit = () => {};
-  const handleDelete = () => {};
+  const handleFileChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+    if (newFileList.length > 0) {
+      const file = newFileList[0].originFileObj;
+      setFilePreview(URL.createObjectURL(file));
+    } else {
+      setFilePreview(null);
+    }
+  };
+
+  console.log({ filenya_bro: fileList });
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("title", form.getFieldValue("title"));
+    formData.append("description", form.getFieldValue("description"));
+    formData.append("status", form.getFieldValue("status"));
+    if (fileList.length > 0) {
+      formData.append("image", fileList[0].originFileObj);
+    }
+    console.log(formData);
+    try {
+      if (isEdit) {
+        await updateNews(formData, idSelected);
+        notification.success({
+          message: "Edit Successfully",
+          description: "Success edit data users",
+        });
+      } else {
+        await postNews(formData);
+        notification.success({
+          message: "Create Successfully",
+          description: "Success create data users",
+        });
+      }
+      form.resetFields();
+      fetchNews();
+      onClose();
+    } catch (error) {
+      notification.error({
+        message: "Failed",
+        description: `Failed to modify users ${error}`,
+      });
+      throw error;
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const result = await deleteNews(newsRecord.ID);
+      if (result !== 200) {
+        throw new Error("Failed to delete user");
+      }
+      fetchNews();
+      setNewsRecord(null);
+      notification.success({
+        message: "Delete Successfully",
+        description: "Success delete data users",
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const filteredNews = news.filter((item) =>
     item.title.toLowerCase().includes(search.toLowerCase())
   );
-
-  //   const handleDelete = async () => {
-  //     try {
-  //       const result = await deleteUser(userRecord.ID);
-  //       if (result !== 200) {
-  //         throw new Error("Failed to delete user");
-  //       }
-  //       fetchnews();
-  //       setUserRecord(null);
-  //       notification.success({
-  //         message: "Delete Successfully",
-  //         description: "Success delete data news",
-  //       });
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   };
 
   const columns = [
     {
@@ -159,8 +221,15 @@ const UserManagement = () => {
       render: (text) => text || "N/A",
     },
     {
-      title: "Last Modified",
-      render: (_, record) => formatDate(record.UpdatedAt),
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (text) =>
+        (
+          <div>
+            <Image width={150} src={`${url}/${text}`} />
+          </div>
+        ) || "N/A",
     },
   ];
 
@@ -168,81 +237,124 @@ const UserManagement = () => {
     <div className="p-4">
       <Drawer
         open={isDrawer}
-        onClose={onClose}
+        onClose={() => onClose()}
         placement="bottom"
-        bodyStyle={{
-          padding: "2rem",
-          backgroundColor: "#f9fafb", // Light gray background
-          borderRadius: "1rem 1rem 0 0",
-        }}
+        className="rounded-t-3xl bg-white shadow-lg"
+        height="auto"
       >
-        <div className="space-y-6">
-          <Form form={form} layout="vertical" className="space-y-4">
-            {/* Username Input */}
-            <Form.Item
-              name="username"
-              label={
-                <span className="text-gray-700 text-sm font-medium">
-                  Username
-                </span>
-              }
-              rules={[
-                { required: true, message: "Please enter your username" },
-              ]}
+        <div className="mx-auto p-6">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            <i className="fas fa-upload mr-2"></i> Upload File
+          </h2>
+          <Card
+            bordered={false}
+            className="bg-gray-100 shadow-md rounded-lg p-4"
+          >
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSubmit}
+              initialValues={{ status: "general" }}
             >
-              <Input
-                placeholder="Enter your username"
-                className="rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </Form.Item>
-            {!isEdit && (
+              {/* Title Input */}
               <Form.Item
-                name="password"
-                label={
-                  <span className="text-gray-700 text-sm font-medium">
-                    password
-                  </span>
-                }
-                rules={[
-                  { required: true, message: "Please enter your password" },
-                ]}
+                name="title"
+                label="Title"
+                rules={[{ required: true, message: "Title is required!" }]}
               >
                 <Input
-                  placeholder="Enter your password"
-                  className="rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Enter file title"
+                  className="border border-gray-300 rounded-md focus:ring focus:ring-blue-500 transition duration-200"
                 />
               </Form.Item>
-            )}
 
-            {/* Role Input */}
-            <Form.Item
-              name="role"
-              label={
-                <span className="text-gray-700 text-sm font-medium">Role</span>
-              }
-              rules={[{ required: true, message: "Please enter your role" }]}
-            >
-              <Input
-                placeholder="Enter your role"
-                className="rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </Form.Item>
-
-            {/* Submit Button */}
-            <Form.Item>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={handleSubmit}
-                className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 focus:ring focus:ring-blue-300 focus:outline-none"
+              {/* Status Input */}
+              <Form.Item
+                name="status"
+                label="Status"
+                rules={[{ required: true, message: "Status is required!" }]}
               >
-                Create
-              </Button>
-            </Form.Item>
-          </Form>
+                <Select
+                  placeholder="Select Status"
+                  className="border border-gray-300 rounded-md focus:ring focus:ring-blue-500 transition duration-200"
+                >
+                  <Select.Option value="general">General</Select.Option>
+                  <Select.Option value="featured">Featured</Select.Option>
+                </Select>
+              </Form.Item>
+
+              {/* Description Input */}
+              <Form.Item
+                name="description"
+                label="Description"
+                rules={[
+                  { required: true, message: "Description is required!" },
+                ]}
+              >
+                <Input.TextArea
+                  rows={3}
+                  placeholder="Brief description"
+                  className="border border-gray-300 rounded-md focus:ring focus:ring-blue-500 transition duration-200"
+                />
+              </Form.Item>
+
+              {/* File Upload */}
+              <Form.Item
+                name="image"
+                label={
+                  <span className="flex items-center">
+                    Upload File&nbsp;
+                    <Tooltip title="Only one file is allowed. Max size: 10MB">
+                      <InfoCircleOutlined className="text-gray-500" />
+                    </Tooltip>
+                  </span>
+                }
+                valuePropName="fileList"
+                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
+              >
+                <Upload
+                  beforeUpload={() => false}
+                  maxCount={1}
+                  onChange={handleFileChange}
+                  className="border-2 border-dashed border-gray-400 p-4 rounded-md flex flex-col items-center justify-center cursor-pointer transition duration-200 hover:border-blue-500"
+                  showUploadList={false} // Hide default file list
+                >
+                  <div className="text-center">
+                    <UploadOutlined className="text-5xl text-blue-500" />
+                    <p className="mt-2 text-gray-600">
+                      Drag & drop your file here, or click to select one
+                    </p>
+                  </div>
+                </Upload>
+                {filePreview && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold">File Preview:</h4>
+                    <img
+                      src={filePreview}
+                      alt="File Preview"
+                      className="w-full h-auto mt-2 border rounded-md shadow-sm"
+                    />
+                  </div>
+                )}
+              </Form.Item>
+
+              {/* Submit Button */}
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+                >
+                  <i className="fas fa-check mr-2"></i> Submit
+                </Button>
+              </Form.Item>
+            </Form>
+          </Card>
         </div>
       </Drawer>
+
       <ModalDelete
+      subject={"News"}
         modal={modal}
         handleDelete={handleDelete}
         handleModal={handleModal}
@@ -287,11 +399,13 @@ const UserManagement = () => {
             <Table
               rowKey="ID"
               dataSource={filteredNews}
-              className="custom-ant-table"
               columns={columns}
+              pagination={{
+                pageSize: 5,
+              }}
               bordered={false}
-              indentSize={3}
-              pagination={{ pageSize: 6 }}
+              size="small"
+              scroll={{ x: "100%" }} // Responsif untuk data panjang
             />
           </div>
         ) : isLoading ? (

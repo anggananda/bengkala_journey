@@ -146,6 +146,15 @@ export const postNews = async (values) => {
   }
 };
 
+export const updateNews = async (values, id) => {
+  try {
+    const response = await apiService.put(`/api/v1/news/update/${id}`, values);
+    return response.status;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const deleteNews = async (id) => {
   try {
     const response = await apiService.delete(`/api/v1/news/${id}`);
@@ -179,7 +188,43 @@ export const getMessage = async () => {
 
 export const getForums = async () => {
   try {
-    const response = await apiService.get("/api/v1/viewforums");
+    const response = await apiService.get("/api/v1/forums");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const postForum = async (values) => {
+  try {
+    const response = await apiService.post("/api/v1/forums", values);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateForum = async (values, id) => {
+  try {
+    const response = await apiService.put(`/api/v1/forum/${id}`, values);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteForum = async (id) => {
+  try {
+    const response = await apiService.delete(`/api/v1/forum/${id}`);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getForumByID = async (id) => {
+  try {
+    const response = await apiService.get(`/api/v1/forums/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -198,7 +243,7 @@ export const fetchPlaylists = async () => {
 
 export const postPlaylist = async (values) => {
   try {
-    const response = await apiService.post("/api/v1/palylists", values);
+    const response = await apiService.post("/api/v1/playlists", values);
     return response.status;
   } catch (error) {
     throw error;
@@ -207,7 +252,7 @@ export const postPlaylist = async (values) => {
 
 export const updatePlaylist = async (values, id) => {
   try {
-    const response = await apiService.put(`/api/vi/playlists/${id}`, values);
+    const response = await apiService.put(`/api/v1/playlist/${id}`, values);
     return response.status;
   } catch (error) {
     throw error;
@@ -216,9 +261,132 @@ export const updatePlaylist = async (values, id) => {
 
 export const deletePlaylist = async (id) => {
   try {
-    const response = await apiService.delete(`/api/v1/playlists/${id}`);
+    const response = await apiService.delete(`/api/v1/playlist/${id}`);
     return response.status;
   } catch (error) {
     throw error;
   }
 };
+
+// Service Reply
+
+export const getAllReply = async () => {
+  try {
+    const response = await apiService.get("/api/v1/reply");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getReply = async (id) => {
+  try {
+    const response = await apiService.get(`/api/v1/reply/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const postReply = async (values) => {
+  try {
+    const response = await apiService.post("/api/v1/reply", values);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateReply = async (values, id) => {
+  try {
+    const response = await apiService.put(`/api/v1/reply/${id}`, values);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteReply = async (id) => {
+  try {
+    const response = await apiService.delete(`/api/v1/reply/${id}`);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Contribute
+export const getContribute = async () => {
+  try {
+    const response = await apiService.get("/api/v1/contribute");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Tenun
+export const getTenun = async () => {
+  try {
+    const response = await apiService.get("/api/v1/tenun");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const postTenun = async (values) => {
+  try {
+    const response = await apiService.post("/api/v1/tenun", values);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateTenun = async (values, id) => {
+  try {
+    const response = await apiService.put(`/api/v1/tenun/${id}`, values);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteTenun = async (id) => {
+  try {
+    const response = await apiService.delete(`/api/v1/tenun/${id}`);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+// Like
+export const getLike = async () =>{
+  try{
+    const response = await apiService.get("/api/v1/like")
+    return response.data
+  }catch(error){
+    throw error
+  }
+}
+
+export const postLike = async (values) =>{
+  try{
+    const response = await apiService.post("/api/v1/like", values)
+    return response.status
+  }catch(error){
+    throw error
+  }
+}
+
+export const deleteLike = async (id) =>{
+  try{
+    const response = await apiService.delete(`/api/v1/like/${id}`)
+    return response.status
+  }catch(error){
+    throw error
+  }
+}

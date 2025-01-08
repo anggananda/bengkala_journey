@@ -11,22 +11,49 @@ import {
   Input,
   notification,
   Skeleton,
+  Upload,
   // Select
 } from "antd";
-import { EditOutlined, SaveOutlined } from "@ant-design/icons";
-import { editProfile, getUserById } from "../../services/apiService";
+import { EditOutlined, SaveOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  editProfile,
+  editUserRegister,
+  getUserById,
+  getUserByUsername,
+} from "../../services/apiService";
 import useAuth from "../../store/useAuth";
+import useProfile from "../../store/useProfile";
+import { authStorage } from "../../utils/encryptStorage";
+const url = import.meta.env.VITE_BASE_URL;
 
 const { Text } = Typography;
 
 const Profile = () => {
   const [profile, setProfile] = useState([]);
+  const [main, setMain] = useState([]);
   const userID = useAuth((state) => state.auth.id);
-
+  const username = useAuth((state) => state.auth.username);
+  const { updateUsername } = useAuth();
+  const { updatePhotoProfile } = useProfile();
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isAddress, setIsAddress] = useState(false);
+  const [isMain, setIsMain] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [form] = Form.useForm();
+  const [filePreview, setFilePreview] = useState(null);
+  const [fileList, setFileList] = useState([]);
+
+  const getMainProfile = async () => {
+    if (!username) return;
+    try {
+      const result = await getUserByUsername(username);
+      console.log(result);
+      setMain(result.datas);
+    } catch (error) {
+      throw error;
+    }
+  };
 
   const getProfile = async () => {
     if (!userID) return; // Pastikan userID sudah tersedia
@@ -49,6 +76,12 @@ const Profile = () => {
   }, [userID]);
 
   useEffect(() => {
+    if (username) {
+      getMainProfile();
+    }
+  }, [username]);
+
+  useEffect(() => {
     if (profile) {
       form.setFieldsValue({
         firstName: profile.first_name || "",
@@ -63,9 +96,39 @@ const Profile = () => {
         province: profile.state_or_province || "",
         city: profile.city || "",
         landmark: profile.landmark || "",
+        username: main.username || "",
       });
+      setAvatarUrl(profile.avatar_url);
     }
   }, [profile, form]);
+
+  const handleMain = async () => {
+    try {
+      const values = await form.validateFields();
+      const formData = new FormData();
+      formData.append("username", values.username);
+      const result = await editUserRegister(formData, userID);
+      if (fileList.length > 0) {
+        const photoProfile = new FormData();
+        photoProfile.append("avatar", fileList[0].originFileObj);
+        const result = await editProfile(photoProfile, userID);
+        updatePhotoProfile(`./upload/${fileList[0].name}`);
+      }
+      updateUsername(values.username);
+      authStorage.storeUsername(values.username);
+      setIsMain(false);
+      notification.success({
+        message: "Edit Successfully",
+        description: `Success to edit ${isEditing ? "profile" : "address"}`,
+      });
+    } catch (error) {
+      notification.error({
+        message: "Failed Edit",
+        description: "Check Your Input Edit",
+      });
+      throw error;
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -92,13 +155,27 @@ const Profile = () => {
         description: `Success to edit ${isEditing ? "profile" : "address"}`,
       });
 
-      isEditing ? setIsEditing(false) : setIsAddress(false);
+      isEditing
+        ? setIsEditing(false)
+        : isAddress
+        ? setIsAddress(false)
+        : setIsMain(false);
     } catch (error) {
       notification.error({
         message: "Failed Edit",
         description: "Check Your Input Edit",
       });
       throw ("Validation Failed:", error);
+    }
+  };
+
+  const handleFileChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+    if (newFileList.length > 0) {
+      const file = newFileList[0].originFileObj;
+      setFilePreview(URL.createObjectURL(file));
+    } else {
+      setFilePreview(null);
     }
   };
 
@@ -111,24 +188,88 @@ const Profile = () => {
         <Card className="my-4">
           <div className="flex justify-between">
             <div className="flex gap-2">
-              <Avatar
-                size={80}
-                src={<Image src="./imgs/angga.png" />}
-                className="shadow-md"
-              ></Avatar>
+              <div className="relative">
+                <Avatar
+                  size={80}
+                  src={
+                    <Image
+                      src={filePreview ? filePreview : `${url}/${avatarUrl}`}
+                    />
+                  }
+                  className="shadow-md"
+                />
+                {isMain && (
+                  <Upload
+                    beforeUpload={() => false}
+                    maxCount={1}
+                    onChange={handleFileChange}
+                    showUploadList={false} // Hide default file list
+                  >
+                    <Button
+                      className="absolute bottom-0 right-0"
+                      icon={<UploadOutlined />}
+                      style={{
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        color: "white",
+                        border: "none",
+                      }}
+                    />
+                  </Upload>
+                )}
+              </div>
               <div className="flex flex-col justify-center items-start ml-4">
-                <Text className="font-semibold font-poppins text-slate-800">
-                  Dwi Angga
-                </Text>
-                <Text className="text-gray-500 font-medium">contributor</Text>
+                <Form
+                  style={{
+                    margin: "0",
+                    padding: "0",
+                  }}
+                  className=""
+                  form={form}
+                  disabled={!isMain}
+                >
+                  <Form.Item
+                    name="username"
+                    style={{
+                      margin: "0",
+                      padding: "0",
+                    }}
+                    rules={[
+                      {
+                        required: isMain ? true : false,
+                        message: "username is required",
+                      },
+                    ]}
+                  >
+                    <Input
+                      prefix={isMain && <EditOutlined />}
+                      placeholder="username"
+                      className="bg-white font-semibold font-poppins p-0 text-slate-800 border-none !outline-none"
+                      disabled={!isMain}
+                      style={{
+                        backgroundColor: "white",
+                        color: "black",
+                        pointerEvents: !isMain ? "none" : "auto", // Hindari klik saat disable
+                      }}
+                    />
+                  </Form.Item>
+                </Form>
+                <Text className="text-gray-500 font-medium">{main.role}</Text>
                 <Text className="text-gray-500 font-light">
-                  Karangasem Bali, Indonesia
+                  {profile.city} {profile.state_or_province}, {profile.country}
                 </Text>
               </div>
             </div>
             <div className="flex justify-center items-center">
-              <Button>
-                Edit <EditOutlined />
+              <Button onClick={() => (isMain ? handleMain() : setIsMain(true))}>
+                {isMain ? (
+                  <span>
+                    Save <SaveOutlined />
+                  </span>
+                ) : (
+                  <span>
+                    Edit <EditOutlined />
+                  </span>
+                )}
               </Button>
             </div>
           </div>
