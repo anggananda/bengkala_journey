@@ -67,7 +67,7 @@ const MainLayout = ({ children }) => {
             <Button
               type="text"
               icon={<MenuOutlined />}
-              className="lg:hidden"
+              className="lg:hidden "
               onClick={toggleDrawer}
             />
           )}

@@ -5,7 +5,6 @@ import { CloseOutlined } from "@ant-design/icons";
 import { steps } from "../../utils/chatbotStep";
 
 const ChatbotWidget = ({ isChatOpen, toggleChat }) => {
-
   return (
     <div>
       {/* ChatBot Component */}

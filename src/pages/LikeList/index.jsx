@@ -77,15 +77,15 @@ const LikeList = () => {
   return (
     <div className="p-4">
       <Card>
-        <div className="flex justify-between items-center">
+        <div className="flex flex-wrap justify-between gap-1 md:gap-0 items-center">
           <div className="">
-            <Text className="text-slate-700 font-poppins font-semibold text-lg">
+            <Text className="text-slate-700 font-poppins font-semibold text-sm md:text-lg">
               List of Kain Tenun
             </Text>
           </div>
           <div className="">
             <Input
-              className="p-2 text-gray-400 w-[300px] shadow-sm !outline-none"
+              className="p-2 text-gray-400 md:w-[300px] shadow-sm !outline-none"
               allowClear
               placeholder="search tenun..."
               onChange={(e) => setSearch(e.target.value)}
@@ -105,10 +105,10 @@ const LikeList = () => {
             }}
             dataSource={filteredLike}
             renderItem={(item) => (
-              <List.Item>
+              <List.Item className="">
                 <Row gutter={[24, 0]}>
                   <Col xs={24} sm={24} md={6} className="">
-                    <div className="h-[200px] w-full rounded-md">
+                    <div className="h-[150px] md:h-[200px] w-full rounded-md">
                       <img
                         src={`${url}/${item.image}`}
                         className="!h-full !w-full !object-cover rounded-md"
@@ -116,20 +116,20 @@ const LikeList = () => {
                     </div>
                   </Col>
                   <Col xs={24} sm={24} md={18}>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between mt-1 md:mt-0">
                       <div className="">
                         <div className="flex flex-col">
-                          <Text className="font-bold text-2xl font-poppins text-gray-800 mb-4">
+                          <Text className="font-bold text-lg md:text-2xl font-poppins text-gray-800 mb-4">
                             {item.title}
                           </Text>
-                          <Text className="font-medium text-sm font-poppins text-gray-500 flex items-center gap-1 mb-1">
+                          <Text className="font-medium text-xs md:text-sm font-poppins text-gray-500 flex items-center gap-1 mb-1">
                             {convertReviewToStars(item.review)}{" "}
                             <span>({item.review})</span>
                           </Text>
-                          <Text className="text-sm font-light font-poppins text-gray-600 leading-relaxed mb-2">
+                          <Text className="text-xs md:text-sm font-light font-poppins text-gray-600 leading-relaxed mb-2">
                             {item.description}
                           </Text>
-                          <div className="text-lg font-medium font-poppins text-gray-700">
+                          <div className="text-sm md:text-lg font-medium font-poppins text-gray-700">
                             Price:{" "}
                             <span className="font-bold text-green-600">
                               {formatToRupiah(parseInt(item?.price))}
@@ -138,7 +138,7 @@ const LikeList = () => {
                           <Button
                             onClick={redirectToWhatsApp}
                             type="primary"
-                            className="bg-green-600 mt-8 w-[200px] hover:!bg-green-500 border-none shadow-lg px-6 py-2 rounded-lg"
+                            className="bg-green-600 mt-4 md:mt-8 md:w-[200px] text-xs md:text-base hover:!bg-green-500 border-none shadow-lg px-2 py-1 md:px-6 md:py-2 rounded-lg"
                             icon={<ShoppingCartOutlined />}
                           >
                             Buy Now
@@ -147,18 +147,19 @@ const LikeList = () => {
                       </div>
                       <div className="">
                         <Popconfirm
-                          title="Delete the Forum"
-                          description="Are you sure to delete this forum?"
+                          title="Delete the tenun?"
+                          description="Are you sure to delete this tenun?"
                           onConfirm={() => handleDelete(item.id)}
                           okText="Delete"
                           cancelText="Cancle"
                         >
-                          <Button className="hover:!border-red-800 hover:!text-red-800">
+                          <Button className="hover:!border-red-800 hover:!text-red-800 text-xs md:text-base">
                             <DeleteOutlined /> Delete
                           </Button>
                         </Popconfirm>
                       </div>
                     </div>
+                    <Divider />
                   </Col>
                 </Row>
               </List.Item>
