@@ -2,113 +2,103 @@ export const steps = [
   {
     id: "1",
     message:
-      "Welcome to Bengkala Journey! I’m here to help you explore the unique culture of Bengkala Village. What would you like to do today?",
+      "Selamat datang di website BengkalaJourney! Aku BengkalaBot🤖 yang siap membantu kamu menjelajahi budaya Bengkala. Apa yang ingin kamu lakukan hari ini?",
     trigger: "options",
   },
   {
     id: "options",
     options: [
-      { value: "dashboard", label: "View Dashboard", trigger: "dashboard" },
-      { value: "contributors", label: "Learn About Contributors", trigger: "contributors" },
-      { value: "forum", label: "Join the Discussion Forum", trigger: "forum" },
-      { value: "culture", label: "Discover Local Culture", trigger: "culture-heritage" },
+      { value: "about", label: "Apa itu BengkalaJourney?", trigger: "tentang" },
+      {
+        value: "fitur",
+        label: "Ada fitur apa saja?",
+        trigger: "fitur",
+      },
+      {
+        value: "tidak",
+        label: "Tidak ada",
+        trigger: "tidak",
+      },
     ],
   },
   {
-    id: "dashboard",
-    message: "Here’s your dashboard! Would you like to view recent updates or check your activity history?",
-    trigger: "dashboard-options",
+    id: "tidak",
+    message:
+      "Kalau butuh bantuan hubungi aku lagi yaa... Selamat menjelajahi Bengkala 🙌",
+    trigger: "validasi",
   },
   {
-    id: "dashboard-options",
+    id: "validasi",
     options: [
-      { value: "updates", label: "View Recent Updates", trigger: "recent-updates" },
-      { value: "history", label: "Check Activity History", trigger: "activity-history" },
-      { value: "back", label: "Go Back", trigger: "back-to-options" },
+      {
+        value: "konfirmasi-validasi",
+        label: "Aku ada pertanyaan lagi!",
+        trigger: "konfirmasi-validasi",
+      },
     ],
   },
   {
-    id: "recent-updates",
-    message: "Recent updates include new cultural insights and community discussions. What next?",
-    trigger: "back-to-options",
+    id: "konfirmasi-validasi",
+    message:
+      "Tentu saja, aku siap membantu, kamu mau melakukan apa lagi hari ini? 😃",
+    trigger: "options",
   },
   {
-    id: "activity-history",
-    message: "Your activity history shows recent forum posts and cultural explorations. Anything else?",
-    trigger: "back-to-options",
+    id: "tentang",
+    message:
+      "BengkalaJourney merupakan website yang menyoroti tentang budaya yang ada di Desa Bengkala, salah satunya yaitu Budaya Kolok.",
+    trigger: "options",
   },
   {
-    id: "contributors",
-    message: "Contributors are essential to this platform. Would you like to learn how to contribute or view contributor profiles?",
-    trigger: "contributors-options",
+    id: "fitur",
+    message:
+      "Wah kamu mau tau ya? Nah di BengkalaJourney ada beragam fitur yang bisa kamu jelajahi, berikut beberapa fiturnya:",
+    trigger: "fitur-options",
   },
   {
-    id: "contributors-options",
+    id: "fitur-options",
     options: [
-      { value: "learn", label: "Learn How to Contribute", trigger: "how-to-contribute" },
-      { value: "profiles", label: "View Contributor Profiles", trigger: "contributor-profiles" },
-      { value: "back", label: "Go Back", trigger: "back-to-options" },
+      { value: "kontribusi", label: "Kontribusi", trigger: "kontribusi" },
+      { value: "forum", label: "Forum Diskusi", trigger: "forum" },
+      { value: "berita", label: "Berita", trigger: "berita" },
+      { value: "tenun", label: "Kain Tenun", trigger: "tenun" },
+      { value: "playlist", label: "Playlist", trigger: "playlist" },
+      { value: "kembali", label: "Kembali", trigger: "kembali" },
     ],
   },
   {
-    id: "how-to-contribute",
-    message: "You can contribute by sharing stories, uploading media, or participating in forums. Ready to get started?",
-    trigger: "back-to-options",
-  },
-  {
-    id: "contributor-profiles",
-    message: "Here are some of our top contributors! Explore their profiles to learn more.",
-    trigger: "back-to-options",
+    id: "kontribusi",
+    message:
+      "Di fitur kontribusi ini kamu bisa mengunggah foto-foto kamu, misalnya kamu pernah datang ke Desa Bengkala terus kamu mengambil foto disana nah itu bisa kamu abadikan di fitur ini dengan cara mengunggahnya dan nantinya bisa di lihat oleh orang-orang 😁",
+    trigger: "fitur-options",
   },
   {
     id: "forum",
-    message: "The forum is where the community gathers to discuss various topics. Would you like to start a new discussion or join an existing one?",
-    trigger: "forum-options",
+    message:
+      "Di Fitur ini kamu bisa bertanya dan menjawab pertanyaan dari orang-orang yang melakukan diskusi, kamu bisa berinteraksi disini dengan menuangkan pertanyaan, ide, ataupun hal menarik lainnya 😃",
+    trigger: "fitur-options",
   },
   {
-    id: "forum-options",
-    options: [
-      { value: "new", label: "Start a New Discussion", trigger: "new-discussion" },
-      { value: "join", label: "Join an Existing Discussion", trigger: "existing-discussions" },
-      { value: "back", label: "Go Back", trigger: "back-to-options" },
-    ],
+    id: "berita",
+    message:
+      "Di fitur ini terdapat berita-berita mengenai Desa Bengkala ataupun yang terkait, kamu disini bisa membaca semua berita yang terupdate mengenai desa bengkala 🤓",
+    trigger: "fitur-options",
   },
   {
-    id: "new-discussion",
-    message: "Great! What's the topic of your discussion?",
-    trigger: "back-to-options",
+    id: "tenun",
+    message:
+      "Di fitur ini terdapat kain-kain tenun dari hasil karya komunitas kolok, disini kamu bisa melihat berbagai macam kain tenun dan juga membaca detail dari kain tersebut dan kalau kamu mau beli juga sangat bisa, kamu tinggal klik tombol beli nanti akan di alihkan ke nomor WA yang mengelola kain tenun tersebut 😆",
+    trigger: "fitur-options",
   },
   {
-    id: "existing-discussions",
-    message: "Here are the current discussions. Pick one to join!",
-    trigger: "back-to-options",
+    id: "playlist",
+    message:
+      "Di fitur ini kamu bisa melihat playlist dari video-video YouTube yang berkaitan dengan Desa Bengkala, kalau kamu masih asing dengan Bengkala dan penasaran mengenai Desa Bengkala kamu bisa tonton saja video disini 😁",
+    trigger: "fitur-options",
   },
   {
-    id: "culture-heritage",
-    message: "Bengkala Village has a rich heritage, including the Kolok culture. Would you like to learn about traditions or explore events?",
-    trigger: "culture-options",
-  },
-  {
-    id: "culture-options",
-    options: [
-      { value: "traditions", label: "Learn About Traditions", trigger: "traditions" },
-      { value: "events", label: "Explore Events", trigger: "events" },
-      { value: "back", label: "Go Back", trigger: "back-to-options" },
-    ],
-  },
-  {
-    id: "traditions",
-    message: "Bengkala is known for its unique sign language and cultural customs. Want to dive deeper?",
-    trigger: "back-to-options",
-  },
-  {
-    id: "events",
-    message: "Upcoming events include cultural festivals and workshops. Check them out soon!",
-    trigger: "back-to-options",
-  },
-  {
-    id: "back-to-options",
-    message: "What would you like to do next?",
+    id: "kembali",
+    message: "Apa ada lagi yang ingin kamu tau hari ini?",
     trigger: "options",
   },
 ];

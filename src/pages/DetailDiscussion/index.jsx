@@ -38,7 +38,7 @@ import { useParams } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import { formatDate } from "../../utils/dateUtils";
 import useAuth from "../../store/useAuth";
-const url = import.meta.env.VITE_BASE_URL
+const url = import.meta.env.VITE_BASE_URL;
 
 const { Text, Title } = Typography;
 
@@ -59,8 +59,8 @@ const DetailDiscussion = () => {
     setIsLoading(true);
     try {
       const result = await getForumByID(id);
-      console.log({forumsss: result});
-      console.log({testinsssssg: result.datas.avatar_url});
+      console.log({ forumsss: result });
+      console.log({ testinsssssg: result.datas.avatar_url });
       setForum(result.datas);
     } catch (error) {
       throw error;
@@ -160,55 +160,112 @@ const DetailDiscussion = () => {
   };
 
   return (
-    <div className="px-8 py-4">
-      <Drawer onClose={() => onClose()} open={isDrawer} placement="bottom">
-        <Form form={form} onFinish={handleSubmit}>
-          <Form.Item name="content" label="Content">
-            <Input.TextArea />
+    <div className="px-2 py-2 md:px-8 md:py-4">
+      <Drawer
+        title={
+          <span style={{ fontSize: "18px", fontWeight: "bold", color: "#333" }}>
+            Add Reply
+          </span>
+        }
+        onClose={() => onClose()}
+        open={isDrawer}
+        placement="right"
+        bodyStyle={{
+          padding: "24px",
+          background: "#f9fafb",
+          borderLeft: "1px solid #e0e0e0",
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          style={{
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Form.Item
+            name="content"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Konten Balasan
+              </span>
+            }
+            rules={[
+              { required: true, message: "Konten balasan tidak boleh kosong!" },
+            ]}
+          >
+            <Input.TextArea
+              placeholder="Type your reply here..."
+              rows={4}
+              style={{
+                resize: "none",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
           </Form.Item>
+
           <Form.Item>
-            <Button htmlType="submit">Post Reply</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                width: "100%",
+                height: "45px",
+                backgroundColor: "#1677ff",
+                borderColor: "#1677ff",
+                fontSize: "16px",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Post Reply
+            </Button>
           </Form.Item>
         </Form>
       </Drawer>
+
       <Card>
-        <div className="flex justify-between items-center">
-          <div className="flex justify-center items-center gap-2">
-            <Text className="text-2xl font-poppins font-semibold">
+        <div className="flex justify-between items-center gap-1">
+          <div className="flex flex-wrap justify-center items-center gap-2">
+            <Text className="text-sm md:text-2xl font-poppins font-semibold">
               {forum.subject}
             </Text>
             <div className="">
-              <Tag color="magenta">{forum.tag}</Tag>
+              <Tag className="text-xs md:text-base" color="magenta">
+                {forum.tag}
+              </Tag>
             </div>
           </div>
-          <div className="flex justify-center items-center gap-2">
+          <div className="flex flex-wrap justify-center items-center gap-1 md:gap-2">
             <div className="flex flex-col justify-center items-end">
-              <Text className="font-poppins">
+              <Text className="text-[8px] md:text-base font-poppins">
                 {forum.first_name} {forum.last_name}
               </Text>
-              <Text className="text-xs font-poppins font-light text-gray-400 ">
+              <Text className="text-[8px] md:text-xs font-poppins font-light text-gray-400 ">
                 {forum.email}
               </Text>
             </div>
-            <Avatar
-              size={50}
-              className="shadow-md"
-              src={`${url}/${forum?.avatar_url}`}
-            />
+            <Avatar className="shadow-md" src={`${url}/${forum?.avatar_url}`} />
           </div>
         </div>
         <div className="my-4">
-          <Text className="font-light text-gray-600 font-poppins">
+          <Text className="text-xs md:text-base font-light text-gray-600 font-poppins">
             {forum.detail}
           </Text>
         </div>
         <div className="mt-4 flex justify-between items-center">
-          <Text className="text-gray-400 font-poppins font-light">
+          <Text className="text-[9px] md:text-base text-gray-400 font-poppins font-light">
             {formatDate(forum.created_at)}
           </Text>
           <button
             onClick={() => handleDrawer()}
-            className="font-poppins text-gray-400 font-light"
+            className="text-[9px] md:text-base font-poppins text-gray-400 font-light"
           >
             Reply
           </button>
@@ -229,42 +286,51 @@ const DetailDiscussion = () => {
           <List.Item>
             <Card className="ml-16">
               <div className="flex justify-between items-center">
-                <div className="flex justify-center items-center gap-3">
-                  <Avatar size={40} src={`${url}/${item.avatar_url}`} className="shadow-md" />
+                <div className="flex justify-center items-center gap-1 flex-wrap md:gap-3">
+                  <Avatar
+                    size={40}
+                    src={`${url}/${item.avatar_url}`}
+                    className="shadow-md"
+                  />
                   <div className="flex flex-col justify-center">
-                    <Text className="font-poppins">
+                    <Text className="text-[8px] md:text-base font-poppins">
                       {item.first_name} {item.last_name}
                     </Text>
-                    <Text className="text-xs font-poppins font-light text-gray-400">
+                    <Text className="text-[5px] md:text-xs font-poppins font-light text-gray-400">
                       {item.email}
                     </Text>
                   </div>
                 </div>
                 <div className="">
-                  <Text className="font-poppins font-light text-gray-400">
+                  <Text className=" hidden md:block font-poppins font-light text-gray-400">
                     {formatDate(item.created_at)}
                   </Text>
                 </div>
               </div>
-              <div className="mt-4 mx-[52px]">
-                <Text className="font-light text-gray-600 font-poppins">
+              <div className="mt-1 md:mt-4 mx-[40px] md:mx-[52px]">
+                <Text className="text-xs md:text-base font-light text-gray-600 font-poppins">
                   {item.content}
                 </Text>
               </div>
-              {item.user_id === userID ||
-                      role === "admin" ||
-                      role === "super admin" ? (
-                        <div className="flex justify-end">
-                          <MoreOutlined
-                            className="text-xl cursor-pointer"
-                            onClick={() =>
-                              handleMoreOptionsClick(item.id)
-                            }
-                          />
-                        </div>
-                      ) : (
-                        ""
-                      )}
+              <div className="flex justify-between items-center mt-1">
+                <div className="">
+                  <Text className="text-[8px] block md:hidden font-poppins font-light text-gray-400">
+                    {formatDate(item.created_at)}
+                  </Text>
+                </div>
+                {item.user_id === userID ||
+                role === "admin" ||
+                role === "super admin" ? (
+                  <div className="flex justify-end">
+                    <MoreOutlined
+                      className="text-xs md:text-xl cursor-pointer"
+                      onClick={() => handleMoreOptionsClick(item.id)}
+                    />
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
               {dropdownVisible === item.id && (
                 <div className="absolute right-0 mt-2 bg-white border rounded shadow-lg z-10">
                   <button

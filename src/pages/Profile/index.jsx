@@ -186,7 +186,23 @@ const Profile = () => {
       </Text>
       {!isLoading ? (
         <Card className="my-4">
-          <div className="flex justify-between">
+          <div className="flex flex-wrap justify-between">
+            <div className="flex justify-end w-full">
+              <Button
+                className="text-xs block md:hidden"
+                onClick={() => (isMain ? handleMain() : setIsMain(true))}
+              >
+                {isMain ? (
+                  <span>
+                    Save <SaveOutlined />
+                  </span>
+                ) : (
+                  <span>
+                    Edit <EditOutlined />
+                  </span>
+                )}
+              </Button>
+            </div>
             <div className="flex gap-2">
               <div className="relative">
                 <Avatar
@@ -243,7 +259,7 @@ const Profile = () => {
                     <Input
                       prefix={isMain && <EditOutlined />}
                       placeholder="username"
-                      className="bg-white font-semibold font-poppins p-0 text-slate-800 border-none !outline-none"
+                      className="text-xs md:text-base bg-white font-semibold font-poppins p-0 text-slate-800 border-none !outline-none"
                       disabled={!isMain}
                       style={{
                         backgroundColor: "white",
@@ -253,14 +269,19 @@ const Profile = () => {
                     />
                   </Form.Item>
                 </Form>
-                <Text className="text-gray-500 font-medium">{main.role}</Text>
-                <Text className="text-gray-500 font-light">
+                <Text className="text-xs md:text-base text-gray-500 font-medium">
+                  {main.role}
+                </Text>
+                <Text className="text-[8px] md:text-base text-gray-500 font-light">
                   {profile.city} {profile.state_or_province}, {profile.country}
                 </Text>
               </div>
             </div>
             <div className="flex justify-center items-center">
-              <Button onClick={() => (isMain ? handleMain() : setIsMain(true))}>
+              <Button
+                className="hidden md:block"
+                onClick={() => (isMain ? handleMain() : setIsMain(true))}
+              >
                 {isMain ? (
                   <span>
                     Save <SaveOutlined />
@@ -282,11 +303,12 @@ const Profile = () => {
       {!isLoading ? (
         <Card>
           <div className="">
-            <div className="flex justify-between items-center mb-8">
-              <Text className="text-slate-700 font-semibold font-poppins">
+            <div className="flex justify-between gap-1 md:gap-0 items-center mb-8">
+              <Text className="text-xs md:text-base text-slate-700 font-semibold font-poppins">
                 Personal Information
               </Text>
               <Button
+                className="text-xs md:text-base"
                 onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
               >
                 {isEditing ? (
@@ -314,6 +336,7 @@ const Profile = () => {
                 <Row gutter={24}>
                   <Col span={12}>
                     <Form.Item
+                    className="text-xs md:text-base"
                       label="First Name"
                       name="firstName"
                       rules={[
@@ -325,7 +348,7 @@ const Profile = () => {
                     >
                       <Input
                         placeholder="First Name"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="text-xs md:text-base bg-white font-poppins text-black border-none !outline-none"
                         disabled={!isEditing}
                         style={{
                           backgroundColor: "white",
@@ -335,6 +358,7 @@ const Profile = () => {
                       />
                     </Form.Item>
                     <Form.Item
+                    className="text-xs md:text-base"
                       label="Email Address"
                       name="email"
                       rules={[
@@ -347,7 +371,7 @@ const Profile = () => {
                     >
                       <Input
                         placeholder="Email Address"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
                         disabled={!isEditing}
                         style={{
                           backgroundColor: "white",
@@ -356,10 +380,10 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="Gender" name="gender">
+                    <Form.Item className="text-xs md:text-base" label="Gender" name="gender">
                       <Input
                         placeholder="Gender"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
                         disabled={!isEditing}
                         style={{
                           backgroundColor: "white",
@@ -385,6 +409,7 @@ const Profile = () => {
 
                   <Col span={12}>
                     <Form.Item
+                    className="text-xs md:text-base"
                       label="Last Name"
                       name="lastName"
                       rules={[
@@ -396,7 +421,7 @@ const Profile = () => {
                     >
                       <Input
                         placeholder="Last Name"
-                        className="bg-white font-poppins border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins border-none !outline-none"
                         disabled={!isEditing}
                         style={{
                           backgroundColor: "white",
@@ -405,7 +430,7 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="Phone" name="phone">
+                    <Form.Item className="text-xs md:text-base" label="Phone" name="phone">
                       <Input
                         placeholder="Phone Number"
                         className="bg-white font-poppins text-black border-none outline-none "
@@ -417,10 +442,10 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="Bio" name="bio">
+                    <Form.Item className="text-xs md:text-base" label="Bio" name="bio">
                       <Input
                         placeholder="Bio"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
                         disabled={!isEditing}
                         style={{
                           backgroundColor: "white",
@@ -444,10 +469,11 @@ const Profile = () => {
         <Card className="my-4">
           <div className="">
             <div className="flex justify-between items-center mb-8">
-              <Text className="text-slate-700 font-semibold font-poppins">
+              <Text className="text-xs md:text-base text-slate-700 font-semibold font-poppins">
                 Address
               </Text>
               <Button
+                className="text-xs md:text-base"
                 onClick={() => (isAddress ? handleSave() : setIsAddress(true))}
               >
                 {isAddress ? (
@@ -474,6 +500,7 @@ const Profile = () => {
                 <Row gutter={24}>
                   <Col span={12}>
                     <Form.Item
+                      className="text-xs md:text-base"
                       label="Address Line 1"
                       name="addressLine1"
                       rules={[
@@ -485,7 +512,7 @@ const Profile = () => {
                     >
                       <Input
                         placeholder="Address"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
                         disabled={!isAddress}
                         style={{
                           backgroundColor: "white",
@@ -495,6 +522,7 @@ const Profile = () => {
                       />
                     </Form.Item>
                     <Form.Item
+                      className="text-xs md:text-base"
                       label="Country"
                       name="country"
                       rules={[
@@ -507,7 +535,7 @@ const Profile = () => {
                     >
                       <Input
                         placeholder="Country"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
                         disabled={!isAddress}
                         style={{
                           backgroundColor: "white",
@@ -516,10 +544,14 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="City" name="city">
+                    <Form.Item
+                      className="text-xs md:text-base"
+                      label="City"
+                      name="city"
+                    >
                       <Input
                         placeholder="City"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
                         disabled={!isAddress}
                         style={{
                           backgroundColor: "white",
@@ -532,12 +564,13 @@ const Profile = () => {
 
                   <Col span={12}>
                     <Form.Item
+                      className="text-xs md:text-base"
                       label="Address Line 2 (optional)"
                       name="addressLine2"
                     >
                       <Input
                         placeholder="Address line 2"
-                        className="bg-white font-poppins border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins border-none !outline-none"
                         disabled={!isAddress}
                         style={{
                           backgroundColor: "white",
@@ -546,10 +579,14 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="State/Province" name="province">
+                    <Form.Item
+                      className="text-xs md:text-base"
+                      label="State/Province"
+                      name="province"
+                    >
                       <Input
                         placeholder="state/province"
-                        className="bg-white font-poppins text-black border-none outline-none "
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none outline-none "
                         disabled={!isAddress}
                         style={{
                           backgroundColor: "white",
@@ -558,10 +595,14 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item label="Landmark" name="landmark">
+                    <Form.Item
+                      className="text-xs md:text-base"
+                      label="Landmark"
+                      name="landmark"
+                    >
                       <Input
                         placeholder="Landmark"
-                        className="bg-white font-poppins text-black border-none !outline-none"
+                        className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
                         disabled={!isAddress}
                         style={{
                           backgroundColor: "white",

@@ -12,43 +12,6 @@ const useAuth = create((set) => ({
     role: null,
   },
 
-  // initAuth: async () => {
-  //   try {
-  //     const token = await authStorage.retrieveToken();
-  //     const username = await authStorage.retrieveUsername();
-  //     if (token && username) {
-  //       set((state) => ({
-  //         auth: {
-  //           ...state.auth,
-  //           username,
-  //           token,
-  //           login: true,
-  //         },
-  //       }));
-
-  //       const result = await getUserByUsername(username);
-  //       const id = result.datas.ID;
-  //       const role = result.datas.role;
-
-  //       if (id) {
-  //         const photo = await getUserById(id);
-  //         const { updatePhotoProfile } = useProfile.getState();
-  //         updatePhotoProfile(photo.datas.avatar_url);
-  //       }
-
-  //       set((state) => ({
-  //         auth: {
-  //           ...state.auth,
-  //           id,
-  //           role,
-  //         },
-  //       }));
-  //     }
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // },
-
   initAuth: async () => {
     try {
       const token = await authStorage.retrieveToken();
@@ -91,51 +54,6 @@ const useAuth = create((set) => ({
       throw error;
     }
   },
-
-  // initAuth: async () => {
-  //   try {
-  //     // Ambil token dan username dari storage
-  //     const token = await authStorage.retrieveToken();
-  //     const username = await authStorage.retrieveUsername();
-
-  //     if (!token || !username) {
-  //       console.warn("Token or username is missing");
-  //       return;
-  //     }
-
-  //     // Ambil data pengguna berdasarkan username
-  //     const userData = await getUserByUsername(username);
-  //     if (!userData?.datas) {
-  //       console.error("Failed to retrieve user data");
-  //       return;
-  //     }
-
-  //     const { ID, role } = userData.datas;
-
-  //     // Perbarui state auth
-  //     set((state) => ({
-  //       auth: {
-  //         ...state.auth,
-  //         id: ID,
-  //         username,
-  //         token,
-  //         login: true,
-  //         role,
-  //       },
-  //     }));
-
-  //     // Jika ID valid, ambil data foto profil
-  //     if (ID) {
-  //       const profileData = await getUserById(ID);
-  //       if (profileData?.datas?.avatar_url) {
-  //         const { updatePhotoProfile } = useProfile.getState();
-  //         updatePhotoProfile(profileData.datas.avatar_url);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error initializing auth:", error);
-  //   }
-  // },
 
   login: async (values) => {
     if (!values.username || !values.password) {

@@ -11,6 +11,7 @@ import {
   Modal,
   Drawer,
   Form,
+  Select,
 } from "antd";
 import {
   SearchOutlined,
@@ -27,6 +28,7 @@ import {
 import { formatDate } from "../../utils/dateUtils";
 import useAuth from "../../store/useAuth";
 import ModalDelete from "../../components/ModalDelete";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -41,6 +43,8 @@ const UserManagement = () => {
   const [idSelected, setIdSelected] = useState(null);
   const [search, setSearch] = useState("");
   const id = useAuth((state) => state.auth.id);
+  const role = useAuth((state) => state.auth.role);
+  const navigate = useNavigate();
 
   const handleModal = () => {
     setModal((prev) => !prev);
@@ -118,11 +122,19 @@ const UserManagement = () => {
     }
   };
 
+  // useEffect(() => {
+  //   if (id) {
+  //     fetchUsers();
+  //   }
+  // }, [id]);
+
   useEffect(() => {
-    if (id) {
-      fetchUsers();
+    if (role === "general") {
+      navigate("/dashboard");
+      return;
     }
-  }, [id]);
+    fetchUsers();
+  }, [role, navigate]);
 
   const filteredUsers = users.filter((item) =>
     item.username.toLowerCase().includes(search.toLowerCase())
@@ -200,94 +212,108 @@ const UserManagement = () => {
   return (
     <div className="p-4">
       <Drawer
-        height={500}
         open={isDrawer}
-        onClose={onClose}
-        placement="bottom"
+        title="Add Users"
+        onClose={() => onClose()}
+        placement="right"
         bodyStyle={{
-          padding: "2rem",
-          backgroundColor: "#f9fafb", // Light gray background
-          borderRadius: "1rem 1rem 0 0",
-          boxShadow: "0 -4px 10px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
+          padding: "24px",
+          background: "#f9fafb",
+          color: "#333",
+          borderLeft: "1px solid #e0e0e0",
         }}
+        height="80vh"
       >
-        <div className="space-y-6">
-          <Form form={form} layout="vertical" className="space-y-4">
-            {/* Username Input */}
+        <Form
+          form={form}
+          layout="vertical"
+          style={{
+            background: "#fff",
+            padding: "24px",
+            borderRadius: "12px",
+            boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Form.Item
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Username
+              </span>
+            }
+            name="username"
+            rules={[{ required: true, message: "username can't empty!" }]}
+          >
+            <Input
+              placeholder="Enter username"
+              style={{
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
+          </Form.Item>
+
+          {!isEdit && (
             <Form.Item
-              name="username"
               label={
-                <span className="text-gray-800 text-sm font-semibold">
-                  Username
+                <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                  Password
                 </span>
               }
-              rules={[
-                { required: true, message: "Please enter your username" },
-              ]}
+              name="password"
+              rules={[{ required: true, message: "password can't empty!" }]}
             >
               <Input
-                placeholder="Enter your username"
-                className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition duration-300"
-                style={{ padding: "12px 16px" }} // Increased padding for comfort
-              />
-            </Form.Item>
-
-            {/* Password Input (Conditional) */}
-            {!isEdit && (
-              <Form.Item
-                name="password"
-                label={
-                  <span className="text-gray-800 text-sm font-semibold">
-                    Password
-                  </span>
-                }
-                rules={[
-                  { required: true, message: "Please enter your password" },
-                ]}
-              >
-                <Input
-                  placeholder="Enter your password"
-                  type="password"
-                  className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition duration-300"
-                  style={{ padding: "12px 16px" }} // Increased padding for comfort
-                />
-              </Form.Item>
-            )}
-
-            {/* Role Input */}
-            <Form.Item
-              name="role"
-              label={
-                <span className="text-gray-800 text-sm font-semibold">
-                  Role
-                </span>
-              }
-              rules={[{ required: true, message: "Please enter your role" }]}
-            >
-              <Input
-                placeholder="Enter your role"
-                className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition duration-300"
-                style={{ padding: "12px 16px" }} // Increased padding for comfort
-              />
-            </Form.Item>
-
-            {/* Submit Button */}
-            <Form.Item>
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={handleSubmit}
-                className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 transition duration-300 focus:ring focus:ring-blue-300 focus:outline-none shadow-md"
+                placeholder="Enter password"
                 style={{
-                  padding: "12px",
-                  fontSize: "16px", // Larger font for better readability
+                  borderRadius: "8px",
+                  padding: "10px 12px",
+                  fontSize: "14px",
                 }}
-              >
-                Create
-              </Button>
+              />
             </Form.Item>
-          </Form>
-        </div>
+          )}
+
+          <Form.Item
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>role</span>
+            }
+            name="role"
+            rules={[{ required: true, message: "Choose role!" }]}
+          >
+            <Select
+              placeholder="Choose role"
+              allowClear
+              options={[
+                { label: "Admin", value: "admin" },
+                { label: "General", value: "general" },
+              ]}
+              style={{
+                borderRadius: "8px",
+                fontSize: "14px",
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              // htmlType="submit"
+              onClick={handleSubmit}
+              style={{
+                width: "100%",
+                height: "45px",
+                backgroundColor: "#1677ff",
+                borderColor: "#1677ff",
+                fontSize: "16px",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Add user
+            </Button>
+          </Form.Item>
+        </Form>
       </Drawer>
 
       <ModalDelete

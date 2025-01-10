@@ -11,6 +11,7 @@ import {
   getAllUsers,
   getNews,
 } from "../../services/apiService";
+import useAuth from "../../store/useAuth";
 
 const { Title, Text } = Typography;
 
@@ -53,6 +54,8 @@ const Management = () => {
   const [news, setNews] = useState([]);
   const [users, setUsers] = useState([]);
   const [playlists, setPlaylists] = useState([]);
+  const navigate = useNavigate();
+  const role = useAuth((state) => state.auth.role);
 
   const fetchUsers = async () => {
     try {
@@ -80,12 +83,14 @@ const Management = () => {
   };
 
   useEffect(() => {
+    if (role === "general") {
+      navigate("/dashboard");
+      return;
+    }
     fetchUsers();
     fecthNews();
     fecthPlaylist();
-  }, []);
-
-  const navigate = useNavigate();
+  }, [role]);
 
   return (
     <div className="overflow-hidden p-4">

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Card, Col, Row, Typography } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import { getTestimonials } from "../../services/apiService";
+const url = import.meta.env.VITE_BASE_URL;
 
 const { Title, Text } = Typography;
 
@@ -32,6 +34,22 @@ const testimonials = [
 ];
 
 const UserTestimonials = () => {
+  const [testimonials, setTestimonials] = useState([]);
+
+  const fetchTestimonial = async () => {
+    try {
+      const result = await getTestimonials();
+      console.log(result.datas);
+      setTestimonials(result.datas.slice(0, 4));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    fetchTestimonial();
+  }, []);
+
   return (
     <div className="bg-gray-100 py-12">
       <div className="max-w-[1280px] mx-auto px-4">
@@ -47,12 +65,13 @@ const UserTestimonials = () => {
               >
                 <div className="flex items-center gap-2 mb-4 justify-center">
                   <Avatar
+                    src={`${url}/${testimonial.avatar_url}`}
                     icon={
                       <UserOutlined className="text-3xl text-gray-500 mr-2" />
                     }
                   />
                   <Text className="font-semibold text-gray-800">
-                    {testimonial.name}
+                    {testimonial.username}
                   </Text>
                 </div>
                 <Text className="text-gray-700 italic text-center block">

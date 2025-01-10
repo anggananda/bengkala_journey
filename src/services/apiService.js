@@ -7,7 +7,11 @@ const apiService = axios.create({
   baseURL: baseUrl,
 });
 
-const noAuthEndpoints = ["/api/v1/register", "/api/v1/login"];
+const noAuthEndpoints = [
+  "/api/v1/register",
+  "/api/v1/login",
+  "/api/v1/testimonials",
+];
 
 apiService.interceptors.request.use(
   async (config) => {
@@ -362,31 +366,107 @@ export const deleteTenun = async (id) => {
   }
 };
 
-
 // Like
-export const getLike = async () =>{
-  try{
-    const response = await apiService.get("/api/v1/like")
-    return response.data
-  }catch(error){
-    throw error
+export const getLike = async () => {
+  try {
+    const response = await apiService.get("/api/v1/like");
+    return response.data;
+  } catch (error) {
+    throw error;
   }
-}
+};
 
-export const postLike = async (values) =>{
-  try{
-    const response = await apiService.post("/api/v1/like", values)
-    return response.status
-  }catch(error){
-    throw error
+export const postLike = async (values) => {
+  try {
+    const response = await apiService.post("/api/v1/like", values);
+    return response.status;
+  } catch (error) {
+    throw error;
   }
-}
+};
 
-export const deleteLike = async (id) =>{
-  try{
-    const response = await apiService.delete(`/api/v1/like/${id}`)
-    return response.status
-  }catch(error){
-    throw error
+export const deleteLike = async (id) => {
+  try {
+    const response = await apiService.delete(`/api/v1/like/${id}`);
+    return response.status;
+  } catch (error) {
+    throw error;
   }
-}
+};
+
+// content
+export const getContent = async () => {
+  try {
+    const response = await apiService.get("/api/v1/content");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const postContent = async (values) => {
+  try {
+    const response = await apiService.post("/api/v1/content", values);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateContent = async (values, id) => {
+  try {
+    const response = await apiService.put(
+      `/api/v1/content/update/${id}`,
+      values
+    );
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteContent = async (id) => {
+  try {
+    const response = await apiService.delete(`/api/v1/content/${id}`);
+    return response.status;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getTestimonials = async () => {
+  try {
+    const response = await apiService.get("/api/v1/testimonials");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const downloadContent = async (filename) => {
+  try {
+    const response = await apiService.get(
+      `/api/v1/content/download/${filename}`,
+      {
+        responseType: "blob", // <- penting agar dapat file dalam format biner
+      }
+    );
+
+    // Buat URL untuk blob
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+
+    // Buat elemen <a> untuk trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename); // nama file saat diunduh
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    // Bersihkan URL blob
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download error:", error);
+    throw error;
+  }
+};

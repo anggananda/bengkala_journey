@@ -1,17 +1,27 @@
-import React from "react";
-import { Card, Typography, Button } from "antd";
-import { ArrowRightOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import { Typography, Avatar } from "antd";
+import { getContent } from "../../services/apiService";
+const url = import.meta.env.VITE_BASE_URL;
 
 const { Title, Text } = Typography;
 
-const galleryImages = [
-  "https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D",
-  "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=500&auto=format&fit=crop&q=60",
-  "https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D",
-  "https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D",
-];
-
 const GallerySection = () => {
+  const [contents, setContents] = useState([]);
+
+  const fetchContent = async () => {
+    try {
+      const result = await getContent();
+      console.log(result.datas.slice(0, 6));
+      setContents(result.datas.filter((data) => !data.deleted_at).slice(0, 8));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    fetchContent();
+  }, []);
+
   return (
     <div className="py-12">
       <div className="max-w-screen-lg mx-auto px-4">
@@ -26,43 +36,39 @@ const GallerySection = () => {
           Discover the vibrant culture of Bengkala through our stunning imagery.
         </Text>
 
-        {/* Gallery */}
-        <div className="flex overflow-x-auto space-x-4 pb-4 mt-6 custom-scrollbar">
-          {galleryImages.map((image, index) => (
-            <Card
-              key={index}
-              hoverable
-              className="min-w-[220px] md:min-w-[260px] border-none shadow-lg"
-              bodyStyle={{ padding: 0 }}
-              cover={
-                <div className="overflow-hidden">
-                  <img
-                    alt={`Gallery Image ${index + 1}`}
-                    src={image}
-                    className="transition-transform duration-300 ease-in-out hover:scale-105"
-                  />
+        <div className="columns-1 sm:columns-2 md:columns-3 gap-2 space-y-4">
+          {contents.map((item) => (
+            <div
+              key={item.id}
+              className="relative group cursor-pointer overflow-hidden"
+              onClick={() => showModal(item)}
+            >
+              <img
+                src={`${url}/${item.image}`}
+                alt={item.name}
+                className="w-full object-cover transition duration-300 group-hover:brightness-75"
+              />
+
+              {/* Overlay info muncul saat hover */}
+              <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex justify-between items-center w-full gap-1">
+                  {/* Kiri: Avatar dan info */}
+                  <div className="flex items-center">
+                    <Avatar
+                      className="shadow-lg w-10 h-10"
+                      src={`${url}/${item.avatar_url}`}
+                    />
+                    <div className="text-white text-xs font-poppins">
+                      <p className="font-semibold">
+                        {item.first_name} {item.last_name}
+                      </p>
+                      <p className="text-gray-300">{item.email}</p>
+                    </div>
+                  </div>
                 </div>
-              }
-            >
-              <div className="p-3 text-center">
-                <p className="text-gray-500 text-xs md:text-sm">
-                  Explore this moment in our culture.
-                </p>
               </div>
-            </Card>
+            </div>
           ))}
-          {/* Button Card */}
-          <Card className="min-w-[220px] md:min-w-[260px] flex items-center justify-center border-none shadow-lg">
-            <Button
-              type="primary"
-              href="/login"
-              className="w-full flex items-center justify-center"
-              icon={<ArrowRightOutlined />}
-              size="large"
-            >
-              Log In for More
-            </Button>
-          </Card>
         </div>
       </div>
     </div>

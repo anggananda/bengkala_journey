@@ -155,23 +155,21 @@ const RegisterPage = () => {
               </Form.Item>
             </Form>
 
-            {/* Social Login */}
-            <div className="flex flex-col space-y-4">
-              {/* Google Login Button */}
+            {/* <div className="flex flex-col space-y-4">
               <Button
                 icon={<GoogleOutlined />}
                 className="w-full py-4 rounded-md border border-gray-300 text-gray-800 font-medium transition duration-200"
               >
                 Continue with Google
               </Button>
-              {/* Facebook Login Button */}
+
               <Button
                 icon={<FacebookOutlined />}
                 className="w-full py-4 rounded-md border border-gray-300 text-gray-800 font-medium transition duration-200"
               >
                 Continue with Facebook
               </Button>
-            </div>
+            </div> */}
 
             {/* Create Account */}
             <p className="text-center text-gray-500">

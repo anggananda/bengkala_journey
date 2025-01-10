@@ -31,7 +31,7 @@ const HeroScrolling = () => {
               className="bg-slate-800 hover:bg-slate-700 text-white outline-none"
               type="normal"
             >
-              Learn More
+              Explore
             </Button>
           </Link>
         </div>
@@ -39,7 +39,7 @@ const HeroScrolling = () => {
 
       <Carousel autoplay>
         {imgs.map((img, index) => (
-          <div className="h-[200px] md:h-[500px] overflow-hidden" key={index}>
+          <div className="h-[700px] md:h-[500px] overflow-hidden" key={index}>
             <img
               src={img}
               className="object-cover hover:scale-110 transition-all ease-in-out duration-500 h-full w-full brightness-50" // Darker filter

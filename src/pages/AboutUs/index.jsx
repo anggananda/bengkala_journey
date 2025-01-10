@@ -38,6 +38,8 @@ const teams = [
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel laborum voluptatibus quae rerum alias esse.",
     ig: "https://instagram.com/angga_dwinnd",
+    tiktok: "https://tiktok.com",
+    github:"https://github.com/anggananda"
   },
   {
     id: 2,
@@ -46,7 +48,9 @@ const teams = [
     position: "UI/UX Design",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel laborum voluptatibus quae rerum alias esse.",
-    ig: "https://instagram.com/angga_dwinnd",
+    ig: "https://instagram.com/candradipasantii",
+    tiktok: "https://tiktok.com",
+    github:"https://github.com"
   },
   {
     id: 3,
@@ -55,7 +59,9 @@ const teams = [
     position: "Frontend Dev",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel laborum voluptatibus quae rerum alias esse.",
-    ig: "https://instagram.com/angga_dwinnd",
+    ig: "https://instagram.com/cahya_griadhi",
+    tiktok: "https://tiktok.com",
+    github:"https://github.com"
   },
   {
     id: 4,
@@ -64,7 +70,9 @@ const teams = [
     position: "Backend Dev",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel laborum voluptatibus quae rerum alias esse.",
-    ig: "https://instagram.com/angga_dwinnd",
+    ig: "https://instagram.com/yastika07",
+    tiktok: "https://tiktok.com",
+    github:"https://github.com"
   },
 ];
 
@@ -196,17 +204,17 @@ const AboutUs = () => {
                         {item.description}
                       </Text>
                       <div className="flex gap-4">
-                        <a href="">
+                        <a href={item.ig} target="blank">
                           <Tooltip title="Instagram">
                             <InstagramFilled className="text-xl" />
                           </Tooltip>
                         </a>
-                        <a href="">
+                        <a href={item.tiktok} target="blank">
                           <Tooltip title="Tiktok">
                             <TikTokFilled className="text-xl" />
                           </Tooltip>
                         </a>
-                        <a href="">
+                        <a href={item.github} target="blank">
                           <Tooltip title="Github">
                             <GithubFilled className="text-xl" />
                           </Tooltip>

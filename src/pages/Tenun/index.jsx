@@ -88,7 +88,9 @@ const Tenun = () => {
   const highestReview = Math.max(...tenun.map((item) => item.review));
 
   // Filter tenun dengan review tertinggi
-  const mostPopular = tenun.filter((item) => item.review === highestReview);
+  const mostPopular = tenun
+    .filter((item) => item.review === highestReview)
+    .slice(0, 1);
 
   console.log({ search: search });
   console.log({ mostPopular: mostPopular });
@@ -165,7 +167,7 @@ const Tenun = () => {
         </div>
         <Row gutter={[24, 0]}>
           {mostPopular.map((popular) => (
-            <Col xs={24} sm={24} md={16}>
+            <Col xs={24} sm={24} md={16} className="hidden md:block">
               <Card className="h-[300px] hover:scale-105 duration-500 ease-in-out transition-all">
                 <Row gutter={[24, 0]}>
                   <Col xs={24} sm={24} md={12}>
@@ -192,7 +194,9 @@ const Tenun = () => {
                     </div>
                     <div className="mb-2">
                       <Text className="text-xs font-light font-poppins">
-                        {popular.description}
+                        {popular.description.length >= 200
+                          ? `${popular.description.slice(0, 200)}...`
+                          : popular.description}
                       </Text>
                     </div>
                     <div className="">
@@ -224,23 +228,17 @@ const Tenun = () => {
           ))}
 
           <Col xs={24} sm={24} md={8}>
-            <Card className="h-[210px] hover:scale-105 duration-500 ease-in-out transition-all bg-gradient-to-br from-sky-200 via-blue-300 to-indigo-400 shadow-lg rounded-lg"></Card>
+            <Card className="bg-[url('./imgs/tenun.png')] bg-cover bg-center brightness-50 shadow-xl h-[250px] hover:scale-105 duration-500 ease-in-out transition-all  from-sky-200 via-blue-300 to-indigo-400 rounded-lg flex flex-col justify-between p-4"></Card>
           </Col>
         </Row>
       </div>
       <div className="mt-4 px-8 flex flex-col gap-6">
         <div className="flex items-center justify-end">
-          <Button
-            className="mr-2 p-5 hover:!border-red-800 hover:!text-red-800"
-            icon={<HeartFilled />}
-          >
-            Popular
-          </Button>
           <div className="">
             <Input
               className="p-2 text-gray-400 w-[300px] shadow-lg"
               allowClear
-              placeholder="search forum..."
+              placeholder="search tenun..."
               onChange={(e) => setSearch(e.target.value)}
               prefix={<SearchOutlined />}
             />
@@ -270,7 +268,14 @@ const Tenun = () => {
                     className="cursor-pointer"
                     onClick={() => handleModal(item)}
                   >
-                    <Meta title={item.title} description={item.description} />
+                    <Meta
+                      title={item.title}
+                      description={
+                        item.description.length >= 200
+                          ? `${item.description.slice(0, 200)}...`
+                          : item.description
+                      }
+                    />
                     <div className="flex justify-between items-center mt-4">
                       <div className="">
                         <Text className="font-poppins font-light">

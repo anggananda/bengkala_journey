@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { notification } from "antd";
 import useAuth from "./store/useAuth";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import AboutUs from "./pages/AboutUs";
 import News from "./pages/News";
@@ -26,55 +26,37 @@ import { authStorage } from "./utils/encryptStorage";
 import Tenun from "./pages/Tenun";
 import TenunManagement from "./pages/TenunManagement";
 import LikeList from "./pages/LikeList";
+import CultureHeritage from "./pages/CultureHeritage";
+import Kolok from "./pages/Kolok";
 
 function App() {
   const initAuth = useAuth((state) => state.initAuth);
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedKey = location.pathname;
 
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     try {
-  //       const response = await initAuth();
-  //       if (response?.status === 401) {
-  //         await authStorage.removeToken();
-  //         await authStorage.removeUsername();
-  //         navigate("/login");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error initializing auth:", error);
-  //       navigate("/login");
-  //     }
-  //   };
-
-  //   checkAuth();
-  // }, [initAuth, navigate]);
+  console.log(selectedKey);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if there's a token
-        const token = await authStorage.retrieveToken();
-
-        if (!token) {
-          console.log("No token found, staying on the landing page.");
-          return; // If no token, stop further checks and remain on the landing page
-        }
-
-        // If token exists, validate it
         const response = await initAuth();
 
         if (response?.status === 401) {
-          console.log("Token expired, redirecting to login.");
           await authStorage.removeToken();
           await authStorage.removeUsername();
-          navigate("/login");
+          if (selectedKey === "/" || selectedKey === "/register") {
+            navigate(selectedKey);
+          } else {
+            navigate("/login");
+          }
         } else {
-          console.log("User authenticated, redirecting to dashboard.");
-          navigate("/dashboard"); // Adjust to the default page for authenticated users
+          if (selectedKey !== location.pathname) {
+            navigate(selectedKey);
+          }
         }
       } catch (error) {
         console.error("Error during authentication check:", error);
-        // Stay on the landing page in case of error
       }
     };
 
@@ -132,6 +114,16 @@ function App() {
           exact
           path="/heritage"
           element={<PrivateRoute component={<CulturalHeritage />} />}
+        />
+        <Route
+          exact
+          path="/culture"
+          element={<PrivateRoute component={<CultureHeritage />} />}
+        />
+        <Route
+          exact
+          path="/kolok"
+          element={<PrivateRoute component={<Kolok />} />}
         />
         <Route
           exact

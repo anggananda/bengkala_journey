@@ -45,7 +45,7 @@ const menuItems = [
     items: [
       { key: "/news", label: "News", icon: <FaNewspaper size={18} /> },
       {
-        key: "/heritage",
+        key: "/culture",
         label: "Culture Heritage",
         icon: <GiTempleGate size={18} />,
       },

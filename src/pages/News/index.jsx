@@ -25,6 +25,7 @@ import {
   UploadOutlined,
   InfoCircleOutlined,
   FilterOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { getNews, postNews } from "../../services/apiService";
 import { formatDate } from "../../utils/dateUtils";
@@ -32,20 +33,15 @@ import useAuth from "../../store/useAuth";
 const url = import.meta.env.VITE_BASE_URL;
 
 const { Text } = Typography;
-const { Meta } = Card;
-const { TextArea } = Input;
 
 const News = () => {
-  const [isDrawer, setIsDrawer] = useState(false);
   const [form] = Form.useForm();
-
-  const [fileList, setFileList] = useState([]);
-  const [filePreview, setFilePreview] = useState(null);
 
   const [news, setNews] = useState([]);
   const [featuredNews, setFeaturedNews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const role = useAuth((state) => state.auth.role);
+  const [search, setSearch] = useState("");
 
   console.log({ roleeee: role });
 
@@ -69,184 +65,26 @@ const News = () => {
     fetchNews();
   }, []);
 
-  const handleDrawer = () => {
-    setIsDrawer((prev) => !prev);
-  };
-
-  const handleFileChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-    if (newFileList.length > 0) {
-      const file = newFileList[0].originFileObj;
-      setFilePreview(URL.createObjectURL(file));
-    } else {
-      setFilePreview(null);
-    }
-  };
-
-  const handleSubmit = async (values) => {
-    const formData = new FormData();
-    formData.append("title", values.title);
-    formData.append("description", values.description);
-    formData.append("status", values.status);
-    if (fileList.length > 0) {
-      formData.append("image", fileList[0].originFileObj);
-    }
-
-    try {
-      const response = await postNews(formData);
-      message.success("File uploaded successfully!");
-      fetchNews();
-      handleDrawer();
-      form.resetFields();
-      setFileList([]);
-      setFilePreview(null);
-    } catch (error) {
-      // message.error(
-      //   error.response?.data?.error || "Failed to submit the form!"
-      // );
-      console.log(error);
-      throw error;
-    }
-  };
+  const filteredNews = news.filter((item) =>
+    item.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="md:px-10 py-5">
-      <Drawer
-        open={isDrawer}
-        height={600}
-        onClose={() => handleDrawer()}
-        placement="bottom"
-      >
-        <div className="max-w-md mx-auto p-5">
-          <Card
-            title={
-              <h3 className="text-lg font-bold text-gray-800">
-                Upload File Form
-              </h3>
-            }
-            bordered={false}
-            className="rounded-xl shadow-lg bg-white"
-          >
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={handleSubmit}
-              initialValues={{ status: "general" }}
-            >
-              {/* Title Input */}
-              <Form.Item
-                name="title"
-                label={
-                  <span className="flex items-center">
-                    Title&nbsp;
-                    <Tooltip title="Give your file a descriptive title">
-                      <InfoCircleOutlined className="text-gray-500" />
-                    </Tooltip>
-                  </span>
-                }
-                rules={[{ required: true, message: "Please input the title!" }]}
-              >
-                <Input
-                  placeholder="E.g., Annual Report 2024"
-                  className="rounded-md border-gray-300 focus:ring focus:ring-blue-500 focus:border-blue-500"
-                />
-              </Form.Item>
-
-              {/* Description Input */}
-              <Form.Item
-                name="description"
-                label="Description"
-                rules={[
-                  { required: true, message: "Please input the description!" },
-                ]}
-              >
-                <Input.TextArea
-                  rows={4}
-                  placeholder="Write a brief description of the file..."
-                  className="rounded-md border-gray-300 focus:ring focus:ring-blue-500 focus:border-blue-500"
-                />
-              </Form.Item>
-
-              {/* Status Input */}
-              <Form.Item
-                name="status"
-                label="Status"
-                rules={[
-                  { required: true, message: "Please input the status!" },
-                ]}
-              >
-                <Input
-                  placeholder=""
-                  className="rounded-md border-gray-300 focus:ring focus:ring-blue-500 focus:border-blue-500"
-                />
-              </Form.Item>
-
-              {/* Drag and Drop File Upload */}
-              <Form.Item
-                name="image"
-                label={
-                  <span className="flex items-center">
-                    Upload File&nbsp;
-                    <Tooltip title="Only one file is allowed. Max size: 10MB">
-                      <InfoCircleOutlined className="text-gray-500" />
-                    </Tooltip>
-                  </span>
-                }
-                valuePropName="fileList"
-                getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
-                rules={[{ required: true, message: "Please upload a file!" }]}
-              >
-                <Upload
-                  beforeUpload={() => false}
-                  maxCount={1}
-                  onChange={handleFileChange}
-                  className="border-2 border-dashed border-gray-400 p-6 rounded-md flex flex-col items-center justify-center cursor-pointer"
-                  showUploadList={false} // Hide default file list
-                >
-                  <div className="text-center">
-                    <UploadOutlined className="text-4xl text-blue-500" />
-                    <p className="mt-2 text-gray-600">
-                      Drag & drop your file here, or click to select one
-                    </p>
-                  </div>
-                </Upload>
-                {filePreview && (
-                  <div className="mt-4">
-                    <h4 className="font-semibold">File Preview:</h4>
-                    <img
-                      src={filePreview}
-                      alt="File Preview"
-                      className="w-full h-auto mt-2 border rounded-md"
-                    />
-                  </div>
-                )}
-              </Form.Item>
-
-              {/* Submit Button */}
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="w-full bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
-                >
-                  Submit
-                </Button>
-              </Form.Item>
-            </Form>
-          </Card>
-        </div>
-      </Drawer>
-
       <Row gutter={[24, 0]}>
         <Col xs={24} sm={24} md={16}>
           <Carousel arrows infinite autoplay>
-            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
-            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
-            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
-            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
-            <Card className="bg-[url('https://images.unsplash.com/photo-1531778272849-d1dd22444c06?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJhbGl8ZW58MHx8MHx8fDA%3D')] bg-cover bg-center h-[410px] hover:scale-105 duration-500 ease-in-out transition-all"></Card>
+            {/* Card 1 */}
+            <Card className="group relative bg-[url('./imgs/n1.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
+
+            {/* Card 2 */}
+            <Card className="group relative bg-[url('./imgs/n2.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
+
+            {/* Card 3 */}
+            <Card className="group relative bg-[url('./imgs/n3.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
           </Carousel>
         </Col>
+
         <Col md={8}>
           <Text className="font-semibold text-slate-700 font-poppins text-lg">
             Other featured news
@@ -261,6 +99,7 @@ const News = () => {
                   xl: 1,
                 }}
                 dataSource={featuredNews}
+                pagination={{ pageSize: 5 }}
                 renderItem={(item) => (
                   <List.Item>
                     <Link to={`/detailnews/${item.ID}`}>
@@ -310,15 +149,21 @@ const News = () => {
           gutter={[24, 0]}
           className="flex justify-between items-center mb-3"
         >
-          <Text className="text-slate-800 font-semibold font-poppins text-xl">
-            Recent News
-          </Text>
-          <div className="flex gap-2 justify-center items-center">
-            <Button>All News</Button>
-
-            <Button onClick={() => handleDrawer()} type="primary">
-              Post News
-            </Button>
+          <div className="px-3 flex justify-between items-center w-full">
+            <div className="">
+              <Text className="text-slate-800 font-semibold font-poppins text-xl">
+                Recent News
+              </Text>
+            </div>
+            <div className="flex gap-2 justify-center items-center">
+              <Input
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-[300px] p-3 text-gray-500 font-poppins"
+                placeholder="search..."
+                allowClear
+                prefix={<SearchOutlined />}
+              />
+            </div>
           </div>
         </Row>
         <Row gutter={[24, 0]} className="">
@@ -332,7 +177,7 @@ const News = () => {
                   lg: 3,
                   xl: 3,
                 }}
-                dataSource={news}
+                dataSource={filteredNews}
                 pagination={{ pageSize: 6 }}
                 renderItem={(item) => (
                   <List.Item>

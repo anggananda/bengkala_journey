@@ -18,7 +18,7 @@ const HeaderComponent = ({ children, collapsed }) => {
   const username = useAuth((state) => state.auth.username);
   const avatar = useProfile((state) => state.profile.photoProfile);
 
-  console.log({isinya_apa: avatar});
+  console.log({ isinya_apa: avatar });
 
   const showConfirmLogout = () => {
     setIsModalVisible(true); // Show the confirmation modal
@@ -46,19 +46,9 @@ const HeaderComponent = ({ children, collapsed }) => {
         </Link>
       ),
     },
+    
     {
       key: "2",
-      label: (
-        <Link to="/setting">
-          <span className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-200">
-            <FaCog className="text-blue-500" size={20} />
-            <span className="font-medium">Settings</span>
-          </span>
-        </Link>
-      ),
-    },
-    {
-      key: "3",
       label: (
         <span
           onClick={(e) => {
@@ -87,7 +77,23 @@ const HeaderComponent = ({ children, collapsed }) => {
             Bengkala<span className="text-blue-400">Journey</span>
           </Link>
         ) : (
-          ""
+          <Dropdown
+            overlayClassName="custom-dropdown"
+            menu={{ items }} // Pass items directly
+            placement="bottom"
+            trigger={["click"]}
+          >
+            <div onClick={(e) => e.preventDefault()} className="flex gap-2">
+              <Space>
+                <Avatar
+                  className="bg-white block md:hidden cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
+                  // icon={<CiUser size={20} className="text-black" />}
+                  size={40}
+                  src={<img src={`${url}/${avatar}`} />}
+                />
+              </Space>
+            </div>
+          </Dropdown>
         )}
 
         {collapsed && (
@@ -113,26 +119,28 @@ const HeaderComponent = ({ children, collapsed }) => {
               </Link>
             </div>
           ) : (
-            <Dropdown
-              overlayClassName="custom-dropdown"
-              menu={{ items }} // Pass items directly
-              placement="bottom"
-              trigger={["click"]}
-            >
-              <div onClick={(e) => e.preventDefault()} className="flex gap-2">
-                <h1 className="font-poppins text-gray-400 font-semibold">
-                  {username}
-                </h1>
-                <Space>
-                  <Avatar
-                    className="bg-white cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
-                    // icon={<CiUser size={20} className="text-black" />}
-                    size={40}
-                    src={<img src={`${url}/${avatar}`} />}
-                  />
-                </Space>
-              </div>
-            </Dropdown>
+            <div className="">
+              <Dropdown
+                overlayClassName="custom-dropdown"
+                menu={{ items }} // Pass items directly
+                placement="bottom"
+                trigger={["click"]}
+              >
+                <div onClick={(e) => e.preventDefault()} className="flex gap-2">
+                  <h1 className="font-poppins text-gray-400 font-semibold md:block hidden">
+                    {username}
+                  </h1>
+                  <Space>
+                    <Avatar
+                      className="bg-white cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300  md:block hidden"
+                      // icon={<CiUser size={20} className="text-black" />}
+                      size={40}
+                      src={<img src={`${url}/${avatar}`} />}
+                    />
+                  </Space>
+                </div>
+              </Dropdown>
+            </div>
           )}
         </div>
 

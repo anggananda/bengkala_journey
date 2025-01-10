@@ -57,10 +57,6 @@ const DetailNews = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchNewsByID();
-  // }, [param]);
-
   useEffect(() => {
     if (param.id) {
       fetchNewsByID();
@@ -107,12 +103,14 @@ const DetailNews = () => {
             </div>
 
             <div className="mt-8 flex justify-end items-center gap-2">
-              <button className="group flex items-center gap-1">
-                <Text className="text-gray-400 group-hover:text-blue-500 transition-colors">
-                  Read Another News
-                </Text>
-                <ArrowRightOutlined className="text-gray-400 group-hover:text-blue-500 transition-colors" />
-              </button>
+              <Link to="/news">
+                <button className="group flex items-center gap-1">
+                  <Text className="text-gray-400 group-hover:text-blue-500 transition-colors">
+                    Read Another News
+                  </Text>
+                  <ArrowRightOutlined className="text-gray-400 group-hover:text-blue-500 transition-colors" />
+                </button>
+              </Link>
             </div>
           </Col>
         ) : newsLoading ? (

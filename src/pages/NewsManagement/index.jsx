@@ -37,6 +37,7 @@ import {
 import { formatDate } from "../../utils/dateUtils";
 import useAuth from "../../store/useAuth";
 import ModalDelete from "../../components/ModalDelete";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -55,10 +56,21 @@ const UserManagement = () => {
   const [idSelected, setIdSelected] = useState(null);
   const [search, setSearch] = useState("");
   const id = useAuth((state) => state.auth.id);
+  const role = useAuth((state) => state.auth.role);
+  const [previewEdit, setPreviewEdit] = useState(null);
+  const navigate = useNavigate();
 
   const handleModal = () => {
     setModal((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (role === "general") {
+      navigate("/dashboard");
+      return;
+    }
+    fetchNews();
+  }, [role, navigate]);
 
   const showDrawer = () => {
     setIsDrawer((prev) => !prev);
@@ -71,6 +83,7 @@ const UserManagement = () => {
     form.setFieldValue("title", record.title);
     form.setFieldValue("description", record.description);
     form.setFieldValue("status", record.status);
+    setPreviewEdit(record.image);
   };
 
   const onClose = () => {
@@ -79,6 +92,7 @@ const UserManagement = () => {
       setIsEdit(false);
       setIdSelected(null);
       setFilePreview(null);
+      setPreviewEdit(null);
     }
     setIsDrawer((prev) => !prev);
   };
@@ -96,9 +110,9 @@ const UserManagement = () => {
     }
   };
 
-  useEffect(() => {
-    fetchNews();
-  }, []);
+  // useEffect(() => {
+
+  // }, []);
 
   const handleFileChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -136,6 +150,7 @@ const UserManagement = () => {
         });
       }
       form.resetFields();
+      setFilePreview(null)
       fetchNews();
       onClose();
     } catch (error) {
@@ -237,18 +252,18 @@ const UserManagement = () => {
     <div className="p-4">
       <Drawer
         open={isDrawer}
-        onClose={() => onClose()}
-        placement="bottom"
-        className="rounded-t-3xl bg-white shadow-lg"
+        title="Post News"
+        onClose={onClose}
+        placement="right"
+        className="rounded-t-3xl bg-gray-50 shadow-lg"
         height="auto"
       >
-        <div className="mx-auto p-6">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-            <i className="fas fa-upload mr-2"></i> Upload File
-          </h2>
+        <div className="mx-auto">
+          {/* Form Section */}
           <Card
             bordered={false}
-            className="bg-gray-100 shadow-md rounded-lg p-4"
+            className="bg-white shadow-md rounded-lg"
+            style={{ maxWidth: "500px", margin: "0 auto" }}
           >
             <Form
               form={form}
@@ -267,12 +282,10 @@ const UserManagement = () => {
                   className="border border-gray-300 rounded-md focus:ring focus:ring-blue-500 transition duration-200"
                 />
               </Form.Item>
-
-              {/* Status Input */}
               <Form.Item
                 name="status"
-                label="Status"
-                rules={[{ required: true, message: "Status is required!" }]}
+                label="status"
+                rules={[{ required: true, message: "status is required!" }]}
               >
                 <Select
                   placeholder="Select Status"
@@ -293,7 +306,7 @@ const UserManagement = () => {
               >
                 <Input.TextArea
                   rows={3}
-                  placeholder="Brief description"
+                  placeholder="Provide a brief description"
                   className="border border-gray-300 rounded-md focus:ring focus:ring-blue-500 transition duration-200"
                 />
               </Form.Item>
@@ -316,17 +329,17 @@ const UserManagement = () => {
                   beforeUpload={() => false}
                   maxCount={1}
                   onChange={handleFileChange}
-                  className="border-2 border-dashed border-gray-400 p-4 rounded-md flex flex-col items-center justify-center cursor-pointer transition duration-200 hover:border-blue-500"
-                  showUploadList={false} // Hide default file list
+                  className="border-2 border-dashed border-gray-400 p-6 rounded-md flex flex-col items-center justify-center cursor-pointer transition duration-200 hover:border-blue-500"
+                  showUploadList={false}
                 >
                   <div className="text-center">
-                    <UploadOutlined className="text-5xl text-blue-500" />
+                    <UploadOutlined className="text-4xl text-blue-500" />
                     <p className="mt-2 text-gray-600">
-                      Drag & drop your file here, or click to select one
+                      Click or drag to upload
                     </p>
                   </div>
                 </Upload>
-                {filePreview && (
+                {filePreview ? (
                   <div className="mt-4">
                     <h4 className="font-semibold">File Preview:</h4>
                     <img
@@ -335,6 +348,17 @@ const UserManagement = () => {
                       className="w-full h-auto mt-2 border rounded-md shadow-sm"
                     />
                   </div>
+                ) : !filePreview && isEdit ? (
+                  <div className="mt-4">
+                    <h4 className="font-semibold">File Preview:</h4>
+                    <img
+                      src={`${url}/${previewEdit}`}
+                      alt="File Preview"
+                      className="w-full h-auto mt-2 border rounded-md shadow-sm"
+                    />
+                  </div>
+                ) : (
+                  ""
                 )}
               </Form.Item>
 
@@ -343,7 +367,7 @@ const UserManagement = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+                  className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
                 >
                   <i className="fas fa-check mr-2"></i> Submit
                 </Button>
@@ -354,7 +378,7 @@ const UserManagement = () => {
       </Drawer>
 
       <ModalDelete
-      subject={"News"}
+        subject={"News"}
         modal={modal}
         handleDelete={handleDelete}
         handleModal={handleModal}

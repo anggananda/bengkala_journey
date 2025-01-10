@@ -58,7 +58,7 @@ const CultureHighlights = () => {
           Bengkala's Kolok culture.
         </Text>
 
-        <Row gutter={[24, 0]} justify="center">
+        <Row gutter={[24, 24]} justify="center">
           {highlights.map((highlight) => (
             <Col xs={24} sm={12} md={8} lg={6} key={highlight.id}>
               <Card

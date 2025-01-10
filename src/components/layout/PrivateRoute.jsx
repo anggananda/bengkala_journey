@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import MainLayout from "./Main";
 import { authStorage } from "../../utils/encryptStorage";
@@ -29,7 +29,7 @@ const PrivateRoute = ({ component }) => {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">
         <div className="flex flex-col items-center">
-          <Spin size="large" tip="Memuat..." className="mb-4" />{" "}
+          <Spin size="large"  className="mb-4" />{" "}
           {/* Spinner dari Ant Design */}
           <p className="text-lg font-semibold text-gray-700">
             Loading, please wait...
