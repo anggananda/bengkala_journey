@@ -38,7 +38,7 @@ import { useParams } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import { formatDate } from "../../utils/dateUtils";
 import useAuth from "../../store/useAuth";
-const url = import.meta.env.VITE_BASE_URL
+const url = import.meta.env.VITE_BASE_URL;
 
 const { Text, Title } = Typography;
 
@@ -59,8 +59,8 @@ const DetailDiscussion = () => {
     setIsLoading(true);
     try {
       const result = await getForumByID(id);
-      console.log({forumsss: result});
-      console.log({testinsssssg: result.datas.avatar_url});
+      console.log({ forumsss: result });
+      console.log({ testinsssssg: result.datas.avatar_url });
       setForum(result.datas);
     } catch (error) {
       throw error;
@@ -161,16 +161,75 @@ const DetailDiscussion = () => {
 
   return (
     <div className="px-8 py-4">
-      <Drawer onClose={() => onClose()} open={isDrawer} placement="bottom">
-        <Form form={form} onFinish={handleSubmit}>
-          <Form.Item name="content" label="Content">
-            <Input.TextArea />
+      <Drawer
+        title={
+          <span style={{ fontSize: "18px", fontWeight: "bold", color: "#333" }}>
+            Add Reply
+          </span>
+        }
+        onClose={() => onClose()}
+        open={isDrawer}
+        placement="right"
+        bodyStyle={{
+          padding: "24px",
+          background: "#f9fafb",
+          borderLeft: "1px solid #e0e0e0",
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          style={{
+            background: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Form.Item
+            name="content"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Konten Balasan
+              </span>
+            }
+            rules={[
+              { required: true, message: "Konten balasan tidak boleh kosong!" },
+            ]}
+          >
+            <Input.TextArea
+              placeholder="Type your reply here..."
+              rows={4}
+              style={{
+                resize: "none",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
           </Form.Item>
+
           <Form.Item>
-            <Button htmlType="submit">Post Reply</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                width: "100%",
+                height: "45px",
+                backgroundColor: "#1677ff",
+                borderColor: "#1677ff",
+                fontSize: "16px",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Post Reply
+            </Button>
           </Form.Item>
         </Form>
       </Drawer>
+
       <Card>
         <div className="flex justify-between items-center">
           <div className="flex justify-center items-center gap-2">
@@ -230,7 +289,11 @@ const DetailDiscussion = () => {
             <Card className="ml-16">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-3">
-                  <Avatar size={40} src={`${url}/${item.avatar_url}`} className="shadow-md" />
+                  <Avatar
+                    size={40}
+                    src={`${url}/${item.avatar_url}`}
+                    className="shadow-md"
+                  />
                   <div className="flex flex-col justify-center">
                     <Text className="font-poppins">
                       {item.first_name} {item.last_name}
@@ -252,19 +315,17 @@ const DetailDiscussion = () => {
                 </Text>
               </div>
               {item.user_id === userID ||
-                      role === "admin" ||
-                      role === "super admin" ? (
-                        <div className="flex justify-end">
-                          <MoreOutlined
-                            className="text-xl cursor-pointer"
-                            onClick={() =>
-                              handleMoreOptionsClick(item.id)
-                            }
-                          />
-                        </div>
-                      ) : (
-                        ""
-                      )}
+              role === "admin" ||
+              role === "super admin" ? (
+                <div className="flex justify-end">
+                  <MoreOutlined
+                    className="text-xl cursor-pointer"
+                    onClick={() => handleMoreOptionsClick(item.id)}
+                  />
+                </div>
+              ) : (
+                ""
+              )}
               {dropdownVisible === item.id && (
                 <div className="absolute right-0 mt-2 bg-white border rounded shadow-lg z-10">
                   <button

@@ -12,6 +12,7 @@ import {
   Drawer,
   Form,
   Image,
+  Select,
 } from "antd";
 import {
   SearchOutlined,
@@ -28,8 +29,10 @@ import {
 import { formatDate } from "../../utils/dateUtils";
 import useAuth from "../../store/useAuth";
 import ModalDelete from "../../components/ModalDelete";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
+const { TextArea } = Input;
 
 const PlaylistManagement = () => {
   const [form] = Form.useForm();
@@ -42,6 +45,8 @@ const PlaylistManagement = () => {
   const [idSelected, setIdSelected] = useState(null);
   const [search, setSearch] = useState("");
   const id = useAuth((state) => state.auth.id);
+  const role = useAuth((state) => state.auth.role);
+  const navigate = useNavigate();
 
   const handleModal = () => {
     setModal((prev) => !prev);
@@ -119,10 +124,18 @@ const PlaylistManagement = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      fetchPlaylist();
+    if (role === "general") {
+      navigate("/dashboard");
+      return;
     }
-  }, [id]);
+    fetchPlaylist();
+  }, [role, navigate]);
+
+  // useEffect(() => {
+  //   // if (id) {
+  //     fetchPlaylist();
+  //   // }
+  // }, []);
 
   const filteredPlaylist = playlist.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase())
@@ -223,119 +236,149 @@ const PlaylistManagement = () => {
   return (
     <div className="p-4">
       <Drawer
-        height={500}
         open={isDrawer}
-        onClose={onClose}
-        placement="bottom"
-        className="bg-white rounded-t-lg"
+        title="Tambah Forum Diskusi"
+        onClose={() => onClose()}
+        placement="right"
+        bodyStyle={{
+          padding: "24px",
+          background: "#f9fafb",
+          color: "#333",
+          borderLeft: "1px solid #e0e0e0",
+        }}
+        height="80vh"
       >
-        <div className="space-y-5 px-5 pb-6">
-          <div className="flex justify-center">
-            <div className="h-1 w-12 bg-gray-300 rounded"></div>
-          </div>
-          <h2 className="text-center text-lg font-medium text-gray-800">
-            Add Item
-          </h2>
-          <Form form={form} layout="vertical" className="space-y-4">
-            {/* Name Input */}
-            <Form.Item
-              name="name"
-              label={
-                <span className="text-gray-700 text-sm font-medium">Name</span>
-              }
-              rules={[{ required: true, message: "Please enter the name" }]}
-            >
-              <Input
-                placeholder="e.g., Cool Item"
-                className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                style={{ padding: "10px" }}
-              />
-            </Form.Item>
+        <Form
+          form={form}
+          layout="vertical"
+          style={{
+            background: "#fff",
+            padding: "24px",
+            borderRadius: "12px",
+            boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <Form.Item
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>Name</span>
+            }
+            name="name"
+            rules={[{ required: true, message: "name tidak boleh kosong!" }]}
+          >
+            <Input
+              placeholder="Masukkan name diskusi"
+              style={{
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
+          </Form.Item>
 
-            {/* Description Input */}
-            <Form.Item
-              name="description"
-              label={
-                <span className="text-gray-700 text-sm font-medium">
-                  Description
-                </span>
-              }
-              rules={[{ required: true, message: "Please add a description" }]}
-            >
-              <Input.TextArea
-                placeholder="Write something here..."
-                rows={3}
-                className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                style={{ padding: "10px" }}
-              />
-            </Form.Item>
+          <Form.Item
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                description
+              </span>
+            }
+            name="description"
+            rules={[
+              { required: true, message: "description tidak boleh kosong!" },
+            ]}
+          >
+            <TextArea
+              rows={4}
+              placeholder="Masukkan detail diskusi"
+              style={{
+                resize: "none",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
+          </Form.Item>
 
-            {/* Genre Input */}
-            <Form.Item
-              name="genre"
-              label={
-                <span className="text-gray-700 text-sm font-medium">Genre</span>
-              }
-              rules={[{ required: true, message: "Please enter a genre" }]}
-            >
-              <Input
-                placeholder="e.g., Adventure"
-                className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                style={{ padding: "10px" }}
-              />
-            </Form.Item>
-
-            {/* URL Input */}
-            <Form.Item
-              name="url"
-              label={
-                <span className="text-gray-700 text-sm font-medium">URL</span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter a valid URL",
-                  type: "url",
-                },
+          <Form.Item
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>genre</span>
+            }
+            name="genre"
+            rules={[
+              { required: true, message: "Pilih setidaknya satu genre!" },
+            ]}
+          >
+            <Select
+              placeholder="Pilih genre terkait"
+              allowClear
+              options={[
+                { label: "Education", value: "Education" },
+                { label: "Traditional", value: "Traditional" },
+                { label: "Ceremonial", value: "Ceremonial" },
+                { label: "Education", value: "Education" },
+                { label: "Others", value: "Others" },
               ]}
-            >
-              <Input
-                placeholder="https://example.com"
-                className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                style={{ padding: "10px" }}
-              />
-            </Form.Item>
+              style={{
+                borderRadius: "8px",
+                fontSize: "14px",
+              }}
+            />
+          </Form.Item>
 
-            {/* Thumbnail Input */}
-            <Form.Item
-              name="thumbnail"
-              label={
-                <span className="text-gray-700 text-sm font-medium">
-                  Thumbnail
-                </span>
-              }
-              rules={[{ required: true, message: "Thumbnail is required" }]}
-            >
-              <Input
-                placeholder="Paste thumbnail link"
-                className="rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                style={{ padding: "10px" }}
-              />
-            </Form.Item>
+          <Form.Item
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>url</span>
+            }
+            name="url"
+            rules={[{ required: true, message: "url tidak boleh kosong!" }]}
+          >
+            <Input
+              placeholder="Masukkan name diskusi"
+              style={{
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
+          </Form.Item>
+          <Form.Item
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Thumbnail
+              </span>
+            }
+            name="thumbnail"
+            rules={[
+              { required: true, message: "thumbnail tidak boleh kosong!" },
+            ]}
+          >
+            <Input
+              placeholder="Masukkan name diskusi"
+              style={{
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
+          </Form.Item>
 
-            {/* Submit Button */}
-            <Form.Item>
-              <Button
-                type="primary"
-                onClick={handleSubmit}
-                className="w-full rounded-md bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all"
-                style={{ padding: "12px" }}
-              >
-                Save
-              </Button>
-            </Form.Item>
-          </Form>
-        </div>
+          <Form.Item>
+            <Button
+              type="primary"
+              onClick={handleSubmit}
+              style={{
+                width: "100%",
+                height: "45px",
+                backgroundColor: "#1677ff",
+                borderColor: "#1677ff",
+                fontSize: "16px",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Tambah Forum
+            </Button>
+          </Form.Item>
+        </Form>
       </Drawer>
 
       <ModalDelete

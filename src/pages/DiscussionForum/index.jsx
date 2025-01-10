@@ -272,47 +272,72 @@ const DiscussionForum = () => {
       {/* Form Add New Forum */}
       <Drawer
         open={isOpen}
+        title="Tambah Forum Diskusi"
         onClose={() => onClose()}
-        placement="bottom"
-        bodyStyle={{ padding: "24px", background: "#f5f5f5" }}
+        placement="right"
+        bodyStyle={{
+          padding: "24px",
+          background: "#f9fafb",
+          color: "#333",
+          borderLeft: "1px solid #e0e0e0",
+        }}
         height="80vh"
       >
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <Title level={3}>Tambah Forum Diskusi</Title>
-        </div>
         <Form
           form={form}
           layout="vertical"
           onFinish={postNewForum}
           style={{
             background: "#fff",
-            padding: "20px",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            padding: "24px",
+            borderRadius: "12px",
+            boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Form.Item
-            label="Subject"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Subject
+              </span>
+            }
             name="subject"
             rules={[{ required: true, message: "Subject tidak boleh kosong!" }]}
           >
-            <Input placeholder="Masukkan subject diskusi" />
+            <Input
+              placeholder="Masukkan subject diskusi"
+              style={{
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
           </Form.Item>
 
           <Form.Item
-            label="Detail"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Detail
+              </span>
+            }
             name="detail"
             rules={[{ required: true, message: "Detail tidak boleh kosong!" }]}
           >
             <TextArea
               rows={4}
-              placeholder="Masukkan Detail diskusi"
-              style={{ resize: "none" }}
+              placeholder="Masukkan detail diskusi"
+              style={{
+                resize: "none",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
             />
           </Form.Item>
 
           <Form.Item
-            label="Tag"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>Tag</span>
+            }
             name="tag"
             rules={[{ required: true, message: "Pilih setidaknya satu tag!" }]}
           >
@@ -327,6 +352,10 @@ const DiscussionForum = () => {
                 { label: "Wisata", value: "wisata" },
                 { label: "Lainnya", value: "lainnya" },
               ]}
+              style={{
+                borderRadius: "8px",
+                fontSize: "14px",
+              }}
             />
           </Form.Item>
 
@@ -337,10 +366,11 @@ const DiscussionForum = () => {
               style={{
                 width: "100%",
                 height: "45px",
-                backgroundColor: "#1890ff",
-                borderColor: "#1890ff",
+                backgroundColor: "#1677ff",
+                borderColor: "#1677ff",
                 fontSize: "16px",
                 fontWeight: "bold",
+                borderRadius: "8px",
               }}
             >
               Tambah Forum

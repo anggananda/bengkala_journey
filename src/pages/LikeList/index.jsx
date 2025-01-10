@@ -105,7 +105,7 @@ const LikeList = () => {
             }}
             dataSource={filteredLike}
             renderItem={(item) => (
-              <List.Item>
+              <List.Item className="">
                 <Row gutter={[24, 0]}>
                   <Col xs={24} sm={24} md={6} className="">
                     <div className="h-[200px] w-full rounded-md">
@@ -147,8 +147,8 @@ const LikeList = () => {
                       </div>
                       <div className="">
                         <Popconfirm
-                          title="Delete the Forum"
-                          description="Are you sure to delete this forum?"
+                          title="Delete the tenun?"
+                          description="Are you sure to delete this tenun?"
                           onConfirm={() => handleDelete(item.id)}
                           okText="Delete"
                           cancelText="Cancle"
@@ -159,6 +159,7 @@ const LikeList = () => {
                         </Popconfirm>
                       </div>
                     </div>
+                    <Divider/>
                   </Col>
                 </Row>
               </List.Item>
