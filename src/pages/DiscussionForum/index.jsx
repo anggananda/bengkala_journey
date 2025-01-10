@@ -242,25 +242,6 @@ const DiscussionForum = () => {
     }
   };
 
-  const dropdownContent = (
-    <div style={{ padding: "10px", width: "400px" }}>
-      <Select
-        mode="multiple"
-        style={{ width: "100%" }}
-        placeholder="Choose tag for filter"
-        onChange={handleTagChange}
-        value={selectedTags}
-        allowClear
-      >
-        <Option value="tradition">Tradition</Option>
-        <Option value="history">History</Option>
-        <Option value="art">Art and Culture</Option>
-        <Option value="tourism">Tourism</Option>
-        <Option value="others">Others</Option>
-      </Select>
-    </div>
-  );
-
   const getColor = (tag) => {
     return tagColors[tag.toLowerCase()] || "red";
   };
@@ -268,51 +249,80 @@ const DiscussionForum = () => {
   return (
     <div className="overflow-hidden">
       {/* Float Button */}
-      <FloatButton className="block md:hidden" icon={<PlusOutlined />} />
+      <FloatButton
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="block md:hidden"
+        icon={<PlusOutlined />}
+      />
       {/* Form Add New Forum */}
       <Drawer
         open={isOpen}
+        title="Tambah Forum Diskusi"
         onClose={() => onClose()}
-        placement="bottom"
-        bodyStyle={{ padding: "24px", background: "#f5f5f5" }}
+        placement="right"
+        bodyStyle={{
+          padding: "24px",
+          background: "#f9fafb",
+          color: "#333",
+          borderLeft: "1px solid #e0e0e0",
+        }}
         height="80vh"
       >
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <Title level={3}>Tambah Forum Diskusi</Title>
-        </div>
         <Form
           form={form}
           layout="vertical"
           onFinish={postNewForum}
           style={{
             background: "#fff",
-            padding: "20px",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            padding: "24px",
+            borderRadius: "12px",
+            boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Form.Item
-            label="Subject"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Subject
+              </span>
+            }
             name="subject"
             rules={[{ required: true, message: "Subject tidak boleh kosong!" }]}
           >
-            <Input placeholder="Masukkan subject diskusi" />
+            <Input
+              placeholder="Masukkan subject diskusi"
+              style={{
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
+            />
           </Form.Item>
 
           <Form.Item
-            label="Detail"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>
+                Detail
+              </span>
+            }
             name="detail"
             rules={[{ required: true, message: "Detail tidak boleh kosong!" }]}
           >
             <TextArea
               rows={4}
-              placeholder="Masukkan Detail diskusi"
-              style={{ resize: "none" }}
+              placeholder="Masukkan detail diskusi"
+              style={{
+                resize: "none",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "14px",
+              }}
             />
           </Form.Item>
 
           <Form.Item
-            label="Tag"
+            label={
+              <span style={{ fontWeight: "600", color: "#4A4A4A" }}>Tag</span>
+            }
             name="tag"
             rules={[{ required: true, message: "Pilih setidaknya satu tag!" }]}
           >
@@ -327,6 +337,10 @@ const DiscussionForum = () => {
                 { label: "Wisata", value: "wisata" },
                 { label: "Lainnya", value: "lainnya" },
               ]}
+              style={{
+                borderRadius: "8px",
+                fontSize: "14px",
+              }}
             />
           </Form.Item>
 
@@ -337,10 +351,11 @@ const DiscussionForum = () => {
               style={{
                 width: "100%",
                 height: "45px",
-                backgroundColor: "#1890ff",
-                borderColor: "#1890ff",
+                backgroundColor: "#1677ff",
+                borderColor: "#1677ff",
                 fontSize: "16px",
                 fontWeight: "bold",
+                borderRadius: "8px",
               }}
             >
               Tambah Forum
@@ -359,15 +374,21 @@ const DiscussionForum = () => {
             prefix={<SearchOutlined />}
           />
           <Row className="mb-5 flex justify-end items-center px-2" gutter={16}>
-            <Button
-              className="mr-2"
-              icon={
-                isDesc ? <SortDescendingOutlined /> : <SortAscendingOutlined />
-              }
-              onClick={toggleSortOrder}
-            >
-              Sort
-            </Button>
+            <Tooltip title={isDesc ? "z-a" : "a-z"} placement="right">
+              <Button
+                className="mr-2"
+                icon={
+                  isDesc ? (
+                    <SortDescendingOutlined />
+                  ) : (
+                    <SortAscendingOutlined />
+                  )
+                }
+                onClick={toggleSortOrder}
+              >
+                Sort
+              </Button>
+            </Tooltip>
           </Row>
           {!isLoading && forums.length > 0 ? (
             <List
@@ -384,7 +405,7 @@ const DiscussionForum = () => {
                 <List.Item>
                   <Card>
                     <div className="flex justify-between items-center">
-                      <Text className="text-3xl font-semibold text-slate-800 font-poppins">
+                      <Text className="text-lg md:text-3xl font-semibold text-slate-800 font-poppins">
                         {item.subject}
                       </Text>
 
@@ -439,15 +460,15 @@ const DiscussionForum = () => {
                         />
 
                         <div className="flex flex-col justify-center items-start">
-                          <Text className="font-semibold text-gray-600">
+                          <Text className="text-xs md:text-base font-semibold text-gray-600">
                             {item.first_name} {item.last_name}
                           </Text>
-                          <Text className="font-light text-gray-400">
+                          <Text className="text-xs md:text-base font-light text-gray-400">
                             {formatDate(item.created_at)}
                           </Text>
                         </div>
                       </Col>
-                      <Col>
+                      <Col className="mt-2 md:mt-0">
                         {item.tag.split(",").map((tag, index) => (
                           <Tag color={getColor(tag.trim())} key={index}>
                             {tag.trim()}
@@ -456,7 +477,7 @@ const DiscussionForum = () => {
                       </Col>
                     </Row>
 
-                    <Text className="font-poppins font-light justify-evenly">
+                    <Text className="text-xs md:text-base font-poppins font-light justify-evenly">
                       {`${
                         item.detail.length >= 1000
                           ? `${item.detail.slice(0, 1000)}...`
@@ -470,7 +491,7 @@ const DiscussionForum = () => {
                     >
                       <Col className="flex justify-center items-center gap-4">
                         <Link to={`/detail-forums/${item.forum_id}`}>
-                          <Button>
+                          <Button className="text-xs md:text-base">
                             <MessageOutlined /> Add Response
                           </Button>
                         </Link>
@@ -528,8 +549,8 @@ const DiscussionForum = () => {
           )}
         </Col>
 
-        <Col md={6} className="mr-4 md:relative">
-          <Card className="my-4 mr-4 hidden md:block md:fixed">
+        <Col md={6} className="mr-4">
+          <Card className="my-4 mr-4 hidden md:block">
             <Button
               type="primary"
               className="w-full"
