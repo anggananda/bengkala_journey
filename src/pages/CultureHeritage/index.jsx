@@ -67,7 +67,7 @@ const CultureHeritage = () => {
         <div className="">
           <div>
             <Text className="text-3xl font-poppins font-bold text-slate-700 uppercase">
-              Discover Yourselft with Nature
+              Discover Yourself with Nature
             </Text>
           </div>
           <div className="my-2 h-[8px] w-[60px] bg-green-700 rounded-full"></div>
@@ -76,15 +76,16 @@ const CultureHeritage = () => {
               The "Kolok" community in Desa Bengkala, Bali, is a unique group of
               individuals with congenital hearing and speech impairments who
               have enriched the village’s cultural identity. They communicate
-              using <span className="font-semibold">Kata Kolok</span>, a distinctive sign language developed
-              locally, reflecting the community's resilience and creativity.
-              Fully integrated into village life, the Kolok people actively
-              participate in religious ceremonies, traditional arts, and daily
-              activities, showcasing a harmonious coexistence with hearing
-              residents. Despite challenges such as limited access to education
-              and economic opportunities, their contributions to preserving
-              cultural traditions and promoting inclusivity highlight the
-              village's strong sense of unity and mutual respect.
+              using <span className="font-semibold">Kata Kolok</span>, a
+              distinctive sign language developed locally, reflecting the
+              community's resilience and creativity. Fully integrated into
+              village life, the Kolok people actively participate in religious
+              ceremonies, traditional arts, and daily activities, showcasing a
+              harmonious coexistence with hearing residents. Despite challenges
+              such as limited access to education and economic opportunities,
+              their contributions to preserving cultural traditions and
+              promoting inclusivity highlight the village's strong sense of
+              unity and mutual respect.
             </Text>
           </div>
           <div className="my-3">
@@ -114,17 +115,18 @@ const CultureHeritage = () => {
           <div className="my-2 h-[8px] w-[60px] bg-yellow-500 rounded-full"></div>
           <div className="mt-4">
             <Text className="text-xs font-light font-poppins text-gray-500">
-              The <span className="font-semibold">Tenun Kolok</span> is a unique handwoven fabric crafted by the
-              Kolok community in Desa Bengkala, showcasing their exceptional
-              skill and artistry despite their hearing and speech impairments.
-              This traditional weaving is not only a source of livelihood but
-              also a cultural expression, reflecting the intricate patterns and
-              vibrant colors inspired by Balinese heritage. Each piece of Tenun
-              Kolok is crafted with meticulous care, symbolizing the resilience
-              and creativity of the Kolok weavers. The fabric has gained
-              recognition for its authenticity and is an embodiment of the
-              village's efforts to preserve traditional crafts while empowering
-              the Kolok community economically and socially.
+              The <span className="font-semibold">Tenun Kolok</span> is a unique
+              handwoven fabric crafted by the Kolok community in Desa Bengkala,
+              showcasing their exceptional skill and artistry despite their
+              hearing and speech impairments. This traditional weaving is not
+              only a source of livelihood but also a cultural expression,
+              reflecting the intricate patterns and vibrant colors inspired by
+              Balinese heritage. Each piece of Tenun Kolok is crafted with
+              meticulous care, symbolizing the resilience and creativity of the
+              Kolok weavers. The fabric has gained recognition for its
+              authenticity and is an embodiment of the village's efforts to
+              preserve traditional crafts while empowering the Kolok community
+              economically and socially.
             </Text>
           </div>
           <div className="my-3">

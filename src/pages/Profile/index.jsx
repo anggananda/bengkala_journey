@@ -45,13 +45,16 @@ const Profile = () => {
   const [fileList, setFileList] = useState([]);
 
   const getMainProfile = async () => {
-    if (!username) return;
-    try {
-      const result = await getUserByUsername(username);
-      console.log(result);
-      setMain(result.datas);
-    } catch (error) {
-      throw error;
+    if (username) {
+      try {
+        const result = await getUserByUsername(username);
+        console.log(result);
+        setMain(result.datas);
+      } catch (error) {
+        throw error;
+      }
+    } else {
+      return;
     }
   };
 
@@ -96,7 +99,7 @@ const Profile = () => {
         province: profile.state_or_province || "",
         city: profile.city || "",
         landmark: profile.landmark || "",
-        username: main.username || "",
+        username: username || "",
       });
       setAvatarUrl(profile.avatar_url);
     }
@@ -336,7 +339,7 @@ const Profile = () => {
                 <Row gutter={24}>
                   <Col span={12}>
                     <Form.Item
-                    className="text-xs md:text-base"
+                      className="text-xs md:text-base"
                       label="First Name"
                       name="firstName"
                       rules={[
@@ -358,7 +361,7 @@ const Profile = () => {
                       />
                     </Form.Item>
                     <Form.Item
-                    className="text-xs md:text-base"
+                      className="text-xs md:text-base"
                       label="Email Address"
                       name="email"
                       rules={[
@@ -380,7 +383,11 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item className="text-xs md:text-base" label="Gender" name="gender">
+                    <Form.Item
+                      className="text-xs md:text-base"
+                      label="Gender"
+                      name="gender"
+                    >
                       <Input
                         placeholder="Gender"
                         className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"
@@ -409,7 +416,7 @@ const Profile = () => {
 
                   <Col span={12}>
                     <Form.Item
-                    className="text-xs md:text-base"
+                      className="text-xs md:text-base"
                       label="Last Name"
                       name="lastName"
                       rules={[
@@ -430,7 +437,11 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item className="text-xs md:text-base" label="Phone" name="phone">
+                    <Form.Item
+                      className="text-xs md:text-base"
+                      label="Phone"
+                      name="phone"
+                    >
                       <Input
                         placeholder="Phone Number"
                         className="bg-white font-poppins text-black border-none outline-none "
@@ -442,7 +453,11 @@ const Profile = () => {
                         }}
                       />
                     </Form.Item>
-                    <Form.Item className="text-xs md:text-base" label="Bio" name="bio">
+                    <Form.Item
+                      className="text-xs md:text-base"
+                      label="Bio"
+                      name="bio"
+                    >
                       <Input
                         placeholder="Bio"
                         className="bg-white text-xs md:text-base font-poppins text-black border-none !outline-none"

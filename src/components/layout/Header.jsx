@@ -46,7 +46,7 @@ const HeaderComponent = ({ children, collapsed }) => {
         </Link>
       ),
     },
-    
+
     {
       key: "2",
       label: (
@@ -77,23 +77,7 @@ const HeaderComponent = ({ children, collapsed }) => {
             Bengkala<span className="text-blue-400">Journey</span>
           </Link>
         ) : (
-          <Dropdown
-            overlayClassName="custom-dropdown"
-            menu={{ items }} // Pass items directly
-            placement="bottom"
-            trigger={["click"]}
-          >
-            <div onClick={(e) => e.preventDefault()} className="flex gap-2">
-              <Space>
-                <Avatar
-                  className="bg-white block md:hidden cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
-                  // icon={<CiUser size={20} className="text-black" />}
-                  size={40}
-                  src={<img src={`${url}/${avatar}`} />}
-                />
-              </Space>
-            </div>
-          </Dropdown>
+          children
         )}
 
         {collapsed && (
@@ -184,7 +168,23 @@ const HeaderComponent = ({ children, collapsed }) => {
           </p>
         </Modal>
 
-        {children}
+        <Dropdown
+          overlayClassName="custom-dropdown"
+          menu={{ items }} // Pass items directly
+          placement="bottom"
+          trigger={["click"]}
+        >
+          <div onClick={(e) => e.preventDefault()} className="flex gap-2">
+            <Space>
+              <Avatar
+                className="bg-white block md:hidden cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
+                // icon={<CiUser size={20} className="text-black" />}
+                size={40}
+                src={<img src={`${url}/${avatar}`} />}
+              />
+            </Space>
+          </div>
+        </Dropdown>
       </Header>
     </Affix>
   );
