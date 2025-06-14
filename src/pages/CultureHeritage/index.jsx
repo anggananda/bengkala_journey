@@ -99,13 +99,13 @@ const CultureHeritage = () => {
             </Link>
           </div>
         </div>
-        <div className="bg-[url('./imgs/budaya.png')] bg-cover rounded-lg shadow-md"></div>
+        <div className="bg-[url('/imgs/budaya.png')] bg-cover rounded-lg shadow-md"></div>
       </div>
       <div
         className="mx-16 my-[20px] mt-10 gap-4 grid grid-cols-1 md:grid-cols-2"
         data-aos="fade-right"
       >
-        <div className="bg-[url('./imgs/tenun.png')] bg-cover rounded-lg shadow-md"></div>
+        <div className="bg-[url('/imgs/tenun.png')] bg-cover rounded-lg shadow-md"></div>
         <div className="">
           <div>
             <Text className="text-3xl font-poppins font-bold text-slate-700 uppercase">
