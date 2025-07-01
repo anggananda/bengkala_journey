@@ -176,12 +176,14 @@ const HeaderComponent = ({ children, collapsed }) => {
         >
           <div onClick={(e) => e.preventDefault()} className="flex gap-2">
             <Space>
-              <Avatar
-                className="bg-white block md:hidden cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
-                // icon={<CiUser size={20} className="text-black" />}
-                size={40}
-                src={<img src={`${url}/${avatar}`} />}
-              />
+              {isLogin && (
+                <Avatar
+                  className="bg-white block md:hidden cursor-pointer border border-gray-300 shadow-md hover:shadow-lg transition-shadow duration-300"
+                  // icon={<CiUser size={20} className="text-black" />}
+                  size={40}
+                  src={<img src={`${url}/${avatar}`} />}
+                />
+              )}
             </Space>
           </div>
         </Dropdown>
