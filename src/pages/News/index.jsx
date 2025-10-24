@@ -75,13 +75,13 @@ const News = () => {
         <Col xs={24} sm={24} md={16}>
           <Carousel arrows infinite autoplay>
             {/* Card 1 */}
-            <Card className="group relative bg-[url('./imgs/n1.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
+            <Card className="group relative bg-[url('/imgs/n1.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
 
             {/* Card 2 */}
-            <Card className="group relative bg-[url('./imgs/n2.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
+            <Card className="group relative bg-[url('/imgs/n2.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
 
             {/* Card 3 */}
-            <Card className="group relative bg-[url('./imgs/n3.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
+            <Card className="group relative bg-[url('/imgs/n3.png')] bg-cover bg-center h-[450px] hover:scale-105 hover:shadow-2xl duration-500 ease-in-out transition-all rounded-lg overflow-hidden border border-transparent hover:border-purple-500"></Card>
           </Carousel>
         </Col>
 
